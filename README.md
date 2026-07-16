@@ -1,100 +1,287 @@
-# 🏓 AtlanticaPadel Club Manager (APCM)
+# 🎾 Atlantica Padel Club Manager (APCM)
 
-> **Simplifying Padel Club Management**
-
-Plataforma Web para Gestão Integrada de Academias de Pádel.
+> Plataforma web para gestão integrada de academias de padel.
 
 ---
 
-# 📖 Sobre o Projeto
+## 📖 Sobre o Projeto
 
-O **AtlanticaPadel Club Manager (APCM)** é uma plataforma web desenvolvida no âmbito do Projeto Final da Licenciatura em Gestão de Sistemas e Computação da Universidade Atlântica.
+O **Atlantica Padel Club Manager (APCM)** é uma plataforma web desenvolvida para centralizar e simplificar a gestão operacional de academias de padel.
 
-O objetivo do projeto é desenvolver uma solução moderna, intuitiva e escalável para apoiar a gestão diária de academias de pádel, centralizando numa única aplicação a gestão de sócios, treinadores, reservas de campos, aulas e indicadores de gestão.
+O objetivo é disponibilizar uma solução moderna, intuitiva e escalável que permita gerir toda a atividade diária da academia através de uma única aplicação.
 
-Embora desenvolvido inicialmente para fins académicos, o projeto foi concebido com uma arquitetura que permite a sua evolução futura para uma solução comercial.
-
----
-
-# 🎯 Funcionalidades Principais
-
-- 👤 Autenticação de utilizadores
-- 🎾 Gestão de reservas de campos
-- 👥 Gestão de sócios
-- 🏆 Gestão de treinadores
-- 📅 Gestão de aulas
-- 📊 Dashboard administrativo
+Este projeto está a ser desenvolvido no âmbito do **Projeto Final de Licenciatura da Universidade Atlântica**.
 
 ---
 
-# 🛠 Tecnologias Utilizadas
+# 🎯 Objetivos
 
-## Frontend
+O APCM pretende responder às necessidades de academias de padel com **2 a 20 campos**, permitindo:
 
-- Next.js
-- React
-- Tailwind CSS
-
-## Backend
-
-- NestJS
-
-## Base de Dados
-
-- PostgreSQL
-
-## ORM
-
-- Prisma
+- Gestão de sócios
+- Gestão de treinadores
+- Gestão de funcionários
+- Gestão de campos
+- Gestão de reservas
+- Gestão de aulas
+- Dashboard com indicadores
+- Relatórios
+- Automatização de processos
+- Integração futura com Inteligência Artificial
 
 ---
 
 # 🚀 Estado do Projeto
 
-**Em desenvolvimento**
+**Versão atual:** `v0.1.0`
 
-Versão atual:
+## ✅ Concluído
 
-**Sprint 1 – Análise e Design da Solução**
+- Documentação inicial
+- Product Vision
+- Product Scope
+- User Roles & Personas
+- Requirements
+- Use Cases
+- Arquitetura
+- Database Design
+- API Design
+- Technology Stack
+- Estrutura do projeto
+- Frontend Next.js
+- Backend NestJS
+- PostgreSQL
+- Prisma ORM
+- Primeira Migração
+- Seed da Base de Dados
+- REST API
+- Endpoint Health
+- Endpoint Roles
+- Swagger
+- Validation Pipe
 
 ---
 
-# 📁 Estrutura do Projeto
+## 🚧 Em Desenvolvimento
+
+- Autenticação JWT
+- Gestão de Utilizadores
+
+---
+
+## ⏳ Planeado
+
+- Gestão de Sócios
+- Gestão de Treinadores
+- Gestão de Campos
+- Gestão de Reservas
+- Gestão de Aulas
+- Dashboard
+- Relatórios
+- Notificações
+- Inteligência Artificial
+
+---
+
+# 🛠 Stack Tecnológica
+
+## Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+## Backend
+
+- NestJS
+- TypeScript
+- Prisma ORM
+
+## Base de Dados
+
+- PostgreSQL
+
+## Documentação
+
+- Markdown
+- Draw.io
+- Figma
+
+---
+
+# 🏗 Arquitetura
 
 ```text
-apps/
-│
-├── web                → Frontend (Next.js)
-
-docs/                  → Documentação técnica
-
-planning/              → Planeamento do projeto
-
-report/                → Relatório final
-
-assets/                → Recursos gráficos
+                +----------------------+
+                |     Frontend         |
+                |      Next.js         |
+                +----------+-----------+
+                           |
+                           |
+                    REST API (HTTPS)
+                           |
+                           |
+                +----------v-----------+
+                |      Backend         |
+                |      NestJS          |
+                +----------+-----------+
+                           |
+                           |
+                     Prisma ORM
+                           |
+                           |
+                +----------v-----------+
+                |     PostgreSQL       |
+                +----------------------+
 ```
 
 ---
 
-# 📚 Documentação
+# 📂 Estrutura do Projeto
 
-A documentação do projeto encontra-se organizada por áreas:
+```text
+AtlanticaPadel-Club-Manager/
 
-- Product Vision
-- Project Charter
-- Software Design Document
-- Arquitetura
-- Modelo de Dados
-- Design System
-- Product Backlog
-- Planeamento Scrum
+│
+├── apps/
+│   ├── api/
+│   └── web/
+│
+├── docs/
+│   ├── requirements/
+│   ├── architecture/
+│   ├── design/
+│   ├── uml/
+│   └── wireframes/
+│
+└── README.md
+```
 
 ---
 
-# 🎓 Contexto Académico
+# 📚 Funcionalidades Implementadas
 
-Este projeto é desenvolvido no âmbito da unidade curricular de **Projeto Final**, integrada na Licenciatura em Gestão de Sistemas e Computação da Universidade Atlântica.
+## Backend
+
+- API REST
+- Swagger
+- Validação Global
+- Prisma ORM
+- PostgreSQL
+- Migrations
+- Seeds
+
+---
+
+# 📋 Funcionalidades Planeadas
+
+## Gestão
+
+- Gestão de Sócios
+- Gestão de Treinadores
+- Gestão de Funcionários
+- Gestão de Campos
+- Gestão de Reservas
+- Gestão de Aulas
+
+## Dashboards
+
+- Estatísticas
+- KPIs
+- Ocupação
+- Receita
+- Utilização dos Campos
+
+## Inteligência Artificial
+
+O APCM irá integrar um módulo de Inteligência Artificial capaz de analisar vídeos de jogos de padel.
+
+Entre as funcionalidades previstas encontram-se:
+
+- Identificação automática de Winners
+- Identificação de Erros Não Forçados
+- Identificação de Erros Forçados
+- Estatísticas da partida
+- Apoio à análise técnica por parte dos treinadores
+
+Esta funcionalidade constitui um dos principais fatores diferenciadores do projeto.
+
+---
+
+# 📈 Roadmap
+
+| Módulo | Estado |
+|---------|:------:|
+| Documentação | ✅ |
+| Arquitetura | ✅ |
+| Backend | 🚧 |
+| Frontend | 🚧 |
+| Base de Dados | ✅ |
+| Swagger | ✅ |
+| JWT | ⏳ |
+| Utilizadores | ⏳ |
+| Sócios | ⏳ |
+| Treinadores | ⏳ |
+| Campos | ⏳ |
+| Reservas | ⏳ |
+| Aulas | ⏳ |
+| Dashboard | ⏳ |
+| IA | ⏳ |
+
+---
+
+# 🚀 Como executar o projeto
+
+## Backend
+
+```bash
+cd apps/api
+
+npm install
+
+npm run start:dev
+```
+
+Swagger:
+
+```
+http://localhost:3001/api
+```
+
+---
+
+## Frontend
+
+```bash
+cd apps/web
+
+npm install
+
+npm run dev
+```
+
+---
+
+# 📄 Documentação
+
+Toda a documentação técnica encontra-se na pasta:
+
+```text
+docs/
+```
+
+Incluindo:
+
+- Product Vision
+- Product Scope
+- User Roles
+- Requirements
+- Use Cases
+- UML
+- Arquitetura
+- Base de Dados
+- API Design
 
 ---
 
@@ -102,14 +289,14 @@ Este projeto é desenvolvido no âmbito da unidade curricular de **Projeto Final
 
 **Marco Oliveira**
 
-Licenciatura em Gestão de Sistemas e Computação
+Projeto Final de Licenciatura
 
 Universidade Atlântica
 
-Ano Letivo 2025/2026
+2026
 
 ---
 
-# 📄 Licença
+# 📌 Estado Atual
 
-Projeto desenvolvido para fins académicos.
+> O projeto encontra-se em desenvolvimento ativo, seguindo uma abordagem incremental baseada em sprints, com documentação atualizada continuamente e controlo de versões através de Git/GitHub.
