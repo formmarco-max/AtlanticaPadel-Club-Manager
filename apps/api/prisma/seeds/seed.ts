@@ -2,7 +2,9 @@ import 'dotenv/config';
 
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../src/generated/prisma/client';
-import { seedRoles } from './role.seed';
+
+import { seedRoles } from './roles.seed';
+import { seedUsers } from './users.seed';
 
 async function main(): Promise<void> {
   const connectionString = process.env.DATABASE_URL;
@@ -25,6 +27,7 @@ async function main(): Promise<void> {
     console.log('🌱 A iniciar o seed da base de dados...');
 
     await seedRoles(prisma);
+    await seedUsers(prisma);
 
     console.log('✅ Seed da base de dados concluído.');
   } finally {
