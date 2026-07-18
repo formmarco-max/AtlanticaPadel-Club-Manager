@@ -26,6 +26,7 @@ export type AggregateMember = {
 
 export type MemberMinAggregateOutputType = {
   id: string | null
+  clubId: string | null
   userId: string | null
   membershipNumber: string | null
   phone: string | null
@@ -39,6 +40,7 @@ export type MemberMinAggregateOutputType = {
 
 export type MemberMaxAggregateOutputType = {
   id: string | null
+  clubId: string | null
   userId: string | null
   membershipNumber: string | null
   phone: string | null
@@ -52,6 +54,7 @@ export type MemberMaxAggregateOutputType = {
 
 export type MemberCountAggregateOutputType = {
   id: number
+  clubId: number
   userId: number
   membershipNumber: number
   phone: number
@@ -67,6 +70,7 @@ export type MemberCountAggregateOutputType = {
 
 export type MemberMinAggregateInputType = {
   id?: true
+  clubId?: true
   userId?: true
   membershipNumber?: true
   phone?: true
@@ -80,6 +84,7 @@ export type MemberMinAggregateInputType = {
 
 export type MemberMaxAggregateInputType = {
   id?: true
+  clubId?: true
   userId?: true
   membershipNumber?: true
   phone?: true
@@ -93,6 +98,7 @@ export type MemberMaxAggregateInputType = {
 
 export type MemberCountAggregateInputType = {
   id?: true
+  clubId?: true
   userId?: true
   membershipNumber?: true
   phone?: true
@@ -179,6 +185,7 @@ export type MemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type MemberGroupByOutputType = {
   id: string
+  clubId: string
   userId: string | null
   membershipNumber: string
   phone: string | null
@@ -213,6 +220,7 @@ export type MemberWhereInput = {
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   id?: Prisma.UuidFilter<"Member"> | string
+  clubId?: Prisma.UuidFilter<"Member"> | string
   userId?: Prisma.UuidNullableFilter<"Member"> | string | null
   membershipNumber?: Prisma.StringFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
@@ -222,11 +230,13 @@ export type MemberWhereInput = {
   isActive?: Prisma.BoolFilter<"Member"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Member"> | Date | string
+  club?: Prisma.XOR<Prisma.ClubScalarRelationFilter, Prisma.ClubWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type MemberOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  clubId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -236,6 +246,7 @@ export type MemberOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  club?: Prisma.ClubOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -246,6 +257,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
+  clubId?: Prisma.UuidFilter<"Member"> | string
   phone?: Prisma.StringNullableFilter<"Member"> | string | null
   birthDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
   joinDate?: Prisma.DateTimeFilter<"Member"> | Date | string
@@ -253,11 +265,13 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"Member"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Member"> | Date | string
+  club?: Prisma.XOR<Prisma.ClubScalarRelationFilter, Prisma.ClubWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id" | "userId" | "membershipNumber">
 
 export type MemberOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  clubId?: Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -277,6 +291,7 @@ export type MemberScalarWhereWithAggregatesInput = {
   OR?: Prisma.MemberScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MemberScalarWhereWithAggregatesInput | Prisma.MemberScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Member"> | string
+  clubId?: Prisma.UuidWithAggregatesFilter<"Member"> | string
   userId?: Prisma.UuidNullableWithAggregatesFilter<"Member"> | string | null
   membershipNumber?: Prisma.StringWithAggregatesFilter<"Member"> | string
   phone?: Prisma.StringNullableWithAggregatesFilter<"Member"> | string | null
@@ -298,11 +313,13 @@ export type MemberCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  club: Prisma.ClubCreateNestedOneWithoutMembersInput
   user?: Prisma.UserCreateNestedOneWithoutMemberInput
 }
 
 export type MemberUncheckedCreateInput = {
   id?: string
+  clubId: string
   userId?: string | null
   membershipNumber: string
   phone?: string | null
@@ -324,11 +341,13 @@ export type MemberUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  club?: Prisma.ClubUpdateOneRequiredWithoutMembersNestedInput
   user?: Prisma.UserUpdateOneWithoutMemberNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clubId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -342,6 +361,7 @@ export type MemberUncheckedUpdateInput = {
 
 export type MemberCreateManyInput = {
   id?: string
+  clubId: string
   userId?: string | null
   membershipNumber: string
   phone?: string | null
@@ -367,6 +387,7 @@ export type MemberUpdateManyMutationInput = {
 
 export type MemberUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clubId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -378,6 +399,16 @@ export type MemberUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type MemberListRelationFilter = {
+  every?: Prisma.MemberWhereInput
+  some?: Prisma.MemberWhereInput
+  none?: Prisma.MemberWhereInput
+}
+
+export type MemberOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type MemberNullableScalarRelationFilter = {
   is?: Prisma.MemberWhereInput | null
   isNot?: Prisma.MemberWhereInput | null
@@ -385,6 +416,7 @@ export type MemberNullableScalarRelationFilter = {
 
 export type MemberCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clubId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -398,6 +430,7 @@ export type MemberCountOrderByAggregateInput = {
 
 export type MemberMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clubId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -411,6 +444,7 @@ export type MemberMaxOrderByAggregateInput = {
 
 export type MemberMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  clubId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   membershipNumber?: Prisma.SortOrder
   phone?: Prisma.SortOrder
@@ -420,6 +454,48 @@ export type MemberMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type MemberCreateNestedManyWithoutClubInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput> | Prisma.MemberCreateWithoutClubInput[] | Prisma.MemberUncheckedCreateWithoutClubInput[]
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutClubInput | Prisma.MemberCreateOrConnectWithoutClubInput[]
+  createMany?: Prisma.MemberCreateManyClubInputEnvelope
+  connect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+}
+
+export type MemberUncheckedCreateNestedManyWithoutClubInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput> | Prisma.MemberCreateWithoutClubInput[] | Prisma.MemberUncheckedCreateWithoutClubInput[]
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutClubInput | Prisma.MemberCreateOrConnectWithoutClubInput[]
+  createMany?: Prisma.MemberCreateManyClubInputEnvelope
+  connect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+}
+
+export type MemberUpdateManyWithoutClubNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput> | Prisma.MemberCreateWithoutClubInput[] | Prisma.MemberUncheckedCreateWithoutClubInput[]
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutClubInput | Prisma.MemberCreateOrConnectWithoutClubInput[]
+  upsert?: Prisma.MemberUpsertWithWhereUniqueWithoutClubInput | Prisma.MemberUpsertWithWhereUniqueWithoutClubInput[]
+  createMany?: Prisma.MemberCreateManyClubInputEnvelope
+  set?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  disconnect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  delete?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  connect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  update?: Prisma.MemberUpdateWithWhereUniqueWithoutClubInput | Prisma.MemberUpdateWithWhereUniqueWithoutClubInput[]
+  updateMany?: Prisma.MemberUpdateManyWithWhereWithoutClubInput | Prisma.MemberUpdateManyWithWhereWithoutClubInput[]
+  deleteMany?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
+}
+
+export type MemberUncheckedUpdateManyWithoutClubNestedInput = {
+  create?: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput> | Prisma.MemberCreateWithoutClubInput[] | Prisma.MemberUncheckedCreateWithoutClubInput[]
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutClubInput | Prisma.MemberCreateOrConnectWithoutClubInput[]
+  upsert?: Prisma.MemberUpsertWithWhereUniqueWithoutClubInput | Prisma.MemberUpsertWithWhereUniqueWithoutClubInput[]
+  createMany?: Prisma.MemberCreateManyClubInputEnvelope
+  set?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  disconnect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  delete?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  connect?: Prisma.MemberWhereUniqueInput | Prisma.MemberWhereUniqueInput[]
+  update?: Prisma.MemberUpdateWithWhereUniqueWithoutClubInput | Prisma.MemberUpdateWithWhereUniqueWithoutClubInput[]
+  updateMany?: Prisma.MemberUpdateManyWithWhereWithoutClubInput | Prisma.MemberUpdateManyWithWhereWithoutClubInput[]
+  deleteMany?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
 }
 
 export type MemberCreateNestedOneWithoutUserInput = {
@@ -458,8 +534,22 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
-export type MemberCreateWithoutUserInput = {
+export type MemberCreateWithoutClubInput = {
   id?: string
+  membershipNumber: string
+  phone?: string | null
+  birthDate?: Date | string | null
+  joinDate?: Date | string
+  notes?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutMemberInput
+}
+
+export type MemberUncheckedCreateWithoutClubInput = {
+  id?: string
+  userId?: string | null
   membershipNumber: string
   phone?: string | null
   birthDate?: Date | string | null
@@ -470,8 +560,65 @@ export type MemberCreateWithoutUserInput = {
   updatedAt?: Date | string
 }
 
+export type MemberCreateOrConnectWithoutClubInput = {
+  where: Prisma.MemberWhereUniqueInput
+  create: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput>
+}
+
+export type MemberCreateManyClubInputEnvelope = {
+  data: Prisma.MemberCreateManyClubInput | Prisma.MemberCreateManyClubInput[]
+  skipDuplicates?: boolean
+}
+
+export type MemberUpsertWithWhereUniqueWithoutClubInput = {
+  where: Prisma.MemberWhereUniqueInput
+  update: Prisma.XOR<Prisma.MemberUpdateWithoutClubInput, Prisma.MemberUncheckedUpdateWithoutClubInput>
+  create: Prisma.XOR<Prisma.MemberCreateWithoutClubInput, Prisma.MemberUncheckedCreateWithoutClubInput>
+}
+
+export type MemberUpdateWithWhereUniqueWithoutClubInput = {
+  where: Prisma.MemberWhereUniqueInput
+  data: Prisma.XOR<Prisma.MemberUpdateWithoutClubInput, Prisma.MemberUncheckedUpdateWithoutClubInput>
+}
+
+export type MemberUpdateManyWithWhereWithoutClubInput = {
+  where: Prisma.MemberScalarWhereInput
+  data: Prisma.XOR<Prisma.MemberUpdateManyMutationInput, Prisma.MemberUncheckedUpdateManyWithoutClubInput>
+}
+
+export type MemberScalarWhereInput = {
+  AND?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
+  OR?: Prisma.MemberScalarWhereInput[]
+  NOT?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
+  id?: Prisma.UuidFilter<"Member"> | string
+  clubId?: Prisma.UuidFilter<"Member"> | string
+  userId?: Prisma.UuidNullableFilter<"Member"> | string | null
+  membershipNumber?: Prisma.StringFilter<"Member"> | string
+  phone?: Prisma.StringNullableFilter<"Member"> | string | null
+  birthDate?: Prisma.DateTimeNullableFilter<"Member"> | Date | string | null
+  joinDate?: Prisma.DateTimeFilter<"Member"> | Date | string
+  notes?: Prisma.StringNullableFilter<"Member"> | string | null
+  isActive?: Prisma.BoolFilter<"Member"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"Member"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Member"> | Date | string
+}
+
+export type MemberCreateWithoutUserInput = {
+  id?: string
+  membershipNumber: string
+  phone?: string | null
+  birthDate?: Date | string | null
+  joinDate?: Date | string
+  notes?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  club: Prisma.ClubCreateNestedOneWithoutMembersInput
+}
+
 export type MemberUncheckedCreateWithoutUserInput = {
   id?: string
+  clubId: string
   membershipNumber: string
   phone?: string | null
   birthDate?: Date | string | null
@@ -508,10 +655,64 @@ export type MemberUpdateWithoutUserInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  club?: Prisma.ClubUpdateOneRequiredWithoutMembersNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  clubId?: Prisma.StringFieldUpdateOperationsInput | string
+  membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MemberCreateManyClubInput = {
+  id?: string
+  userId?: string | null
+  membershipNumber: string
+  phone?: string | null
+  birthDate?: Date | string | null
+  joinDate?: Date | string
+  notes?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MemberUpdateWithoutClubInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutMemberNestedInput
+}
+
+export type MemberUncheckedUpdateWithoutClubInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MemberUncheckedUpdateManyWithoutClubInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   membershipNumber?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   birthDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -526,6 +727,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clubId?: boolean
   userId?: boolean
   membershipNumber?: boolean
   phone?: boolean
@@ -535,11 +737,13 @@ export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clubId?: boolean
   userId?: boolean
   membershipNumber?: boolean
   phone?: boolean
@@ -549,11 +753,13 @@ export type MemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  clubId?: boolean
   userId?: boolean
   membershipNumber?: boolean
   phone?: boolean
@@ -563,11 +769,13 @@ export type MemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectScalar = {
   id?: boolean
+  clubId?: boolean
   userId?: boolean
   membershipNumber?: boolean
   phone?: boolean
@@ -579,24 +787,29 @@ export type MemberSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "membershipNumber" | "phone" | "birthDate" | "joinDate" | "notes" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["member"]>
+export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clubId" | "userId" | "membershipNumber" | "phone" | "birthDate" | "joinDate" | "notes" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["member"]>
 export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }
 export type MemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }
 export type MemberIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  club?: boolean | Prisma.ClubDefaultArgs<ExtArgs>
   user?: boolean | Prisma.Member$userArgs<ExtArgs>
 }
 
 export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Member"
   objects: {
+    club: Prisma.$ClubPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    clubId: string
     userId: string | null
     membershipNumber: string
     phone: string | null
@@ -1000,6 +1213,7 @@ readonly fields: MemberFieldRefs;
  */
 export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  club<T extends Prisma.ClubDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClubDefaultArgs<ExtArgs>>): Prisma.Prisma__ClubClient<runtime.Types.Result.GetResult<Prisma.$ClubPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.Member$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1031,6 +1245,7 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface MemberFieldRefs {
   readonly id: Prisma.FieldRef<"Member", 'String'>
+  readonly clubId: Prisma.FieldRef<"Member", 'String'>
   readonly userId: Prisma.FieldRef<"Member", 'String'>
   readonly membershipNumber: Prisma.FieldRef<"Member", 'String'>
   readonly phone: Prisma.FieldRef<"Member", 'String'>

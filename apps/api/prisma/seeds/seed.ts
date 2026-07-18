@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../../src/generated/prisma/client';
 
+import { seedClubs } from './clubs.seed';
 import { seedRoles } from './roles.seed';
 import { seedUsers } from './users.seed';
 
@@ -26,6 +27,7 @@ async function main(): Promise<void> {
   try {
     console.log('🌱 A iniciar o seed da base de dados...');
 
+    await seedClubs(prisma);
     await seedRoles(prisma);
     await seedUsers(prisma);
 

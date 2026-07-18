@@ -5,34 +5,21 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { USER_SELECT } from './constants/user-select.constant';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
-const userSelect = {
-  id: true,
-  roleId: true,
-  email: true,
-  firstName: true,
-  lastName: true,
-  isActive: true,
-  createdAt: true,
-  updatedAt: true,
-  role: {
-    select: {
-      id: true,
-      name: true,
-      description: true,
-    },
-  },
-};
+import { UsersQueryDto } from './dto/users-query.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
-    const normalizedEmail = createUserDto.email.trim().toLowerCase();
+    const normalizedEmail = createUserDto.email
+      .trim()
+      .toLowerCase();
 
     const existingUser = await this.prisma.user.findUnique({
       where: {
@@ -49,6 +36,7 @@ export class UsersService {
       );
     }
 
+    await this.ensureClubExists(createUserDto.clubId);
     await this.ensureRoleExists(createUserDto.roleId);
 
     const passwordHash = await bcrypt.hash(
@@ -58,6 +46,7 @@ export class UsersService {
 
     return this.prisma.user.create({
       data: {
+        clubId: createUserDto.clubId,
         roleId: createUserDto.roleId,
         email: normalizedEmail,
         passwordHash,
@@ -65,22 +54,104 @@ export class UsersService {
         lastName: createUserDto.lastName.trim(),
         isActive: createUserDto.isActive ?? true,
       },
-      select: userSelect,
+      select: USER_SELECT,
     });
   }
 
-  findAll() {
-    return this.prisma.user.findMany({
-      select: userSelect,
-      orderBy: [
-        {
-          firstName: 'asc',
-        },
-        {
-          lastName: 'asc',
-        },
-      ],
-    });
+  async findAll(queryDto: UsersQueryDto) {
+    const {
+      page = 1,
+      limit = 10,
+      q,
+      role,
+      active,
+      sort = 'createdAt',
+      order = 'desc',
+    } = queryDto;
+
+    const skip = (page - 1) * limit;
+    const search = q?.trim();
+
+    const where: Prisma.UserWhereInput = {
+      ...(typeof active === 'boolean'
+        ? {
+            isActive: active,
+          }
+        : {}),
+
+      ...(role
+        ? {
+            role: {
+              name: {
+                equals: role,
+                mode: 'insensitive',
+              },
+            },
+          }
+        : {}),
+
+      ...(search
+        ? {
+            OR: [
+              {
+                firstName: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                lastName: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                email: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              },
+            ],
+          }
+        : {}),
+    };
+
+    const orderBy: Prisma.UserOrderByWithRelationInput = {
+      [sort]: order,
+    };
+
+    const [users, totalItems] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where,
+        skip,
+        take: limit,
+        select: USER_SELECT,
+        orderBy: [
+          orderBy,
+          {
+            id: 'asc',
+          },
+        ],
+      }),
+
+      this.prisma.user.count({
+        where,
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      items: users,
+      meta: {
+        page,
+        limit,
+        totalItems,
+        totalPages,
+        hasPreviousPage: page > 1,
+        hasNextPage: page < totalPages,
+      },
+    };
   }
 
   async findOne(id: string) {
@@ -88,7 +159,7 @@ export class UsersService {
       where: {
         id,
       },
-      select: userSelect,
+      select: USER_SELECT,
     });
 
     if (!user) {
@@ -105,6 +176,10 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
   ) {
     await this.ensureUserExists(id);
+
+    if (updateUserDto.clubId) {
+      await this.ensureClubExists(updateUserDto.clubId);
+    }
 
     if (updateUserDto.roleId) {
       await this.ensureRoleExists(updateUserDto.roleId);
@@ -145,16 +220,15 @@ export class UsersService {
         id,
       },
       data: {
+        clubId: updateUserDto.clubId,
         roleId: updateUserDto.roleId,
         email: normalizedEmail,
         passwordHash,
-        firstName:
-          updateUserDto.firstName?.trim(),
-        lastName:
-          updateUserDto.lastName?.trim(),
+        firstName: updateUserDto.firstName?.trim(),
+        lastName: updateUserDto.lastName?.trim(),
         isActive: updateUserDto.isActive,
       },
-      select: userSelect,
+      select: USER_SELECT,
     });
   }
 
@@ -165,7 +239,7 @@ export class UsersService {
       where: {
         id,
       },
-      select: userSelect,
+      select: USER_SELECT,
     });
   }
 
@@ -184,6 +258,25 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException(
         'O utilizador solicitado não foi encontrado.',
+      );
+    }
+  }
+
+  private async ensureClubExists(
+    clubId: string,
+  ): Promise<void> {
+    const club = await this.prisma.club.findUnique({
+      where: {
+        id: clubId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!club) {
+      throw new NotFoundException(
+        'O clube indicado não foi encontrado.',
       );
     }
   }

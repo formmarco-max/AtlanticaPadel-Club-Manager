@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './auth/auth.module';
+import { ClubsModule } from './clubs/clubs.module';
 import { CoachesModule } from './coaches/coaches.module';
 import { CourtsModule } from './courts/courts.module';
 import { DashboardModule } from './dashboard/dashboard.module';
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
     RolesModule,
+    ClubsModule,
     MembersModule,
     CoachesModule,
     CourtsModule,

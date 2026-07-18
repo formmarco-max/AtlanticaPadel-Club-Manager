@@ -1,11 +1,18 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+
+  // Prefixo global da API
+  app.setGlobalPrefix('api/v1');
 
   // Validação global dos DTOs
   app.useGlobalPipes(
@@ -16,8 +23,14 @@ async function bootstrap() {
     }),
   );
 
-  // Prefixo global da API
-  app.setGlobalPrefix('api/v1');
+  // Tratamento global de exceções
+  app.useGlobalFilters(
+    new GlobalExceptionFilter(),
+    new PrismaExceptionFilter(),
+  );
+
+  // Formato global das respostas de sucesso
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   // Configuração do Swagger
   const config = new DocumentBuilder()
@@ -41,10 +54,12 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(process.env.PORT ?? 3001);
+  const port = process.env.PORT ?? 3001;
 
-  console.log('🚀 APCM API running on http://localhost:3001/api/v1');
-  console.log('📚 Swagger disponível em http://localhost:3001/api');
+  await app.listen(port);
+
+  logger.log(`APCM API running on http://localhost:${port}/api/v1`);
+  logger.log(`Swagger disponível em http://localhost:${port}/api`);
 }
 
-bootstrap();
+void bootstrap();

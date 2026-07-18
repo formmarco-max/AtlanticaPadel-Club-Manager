@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Club: 'Club',
   Role: 'Role',
   User: 'User',
   Member: 'Member'
@@ -72,6 +73,31 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const ClubScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  email: 'email',
+  phone: 'phone',
+  website: 'website',
+  description: 'description',
+  taxNumber: 'taxNumber',
+  address: 'address',
+  postalCode: 'postalCode',
+  city: 'city',
+  district: 'district',
+  country: 'country',
+  logoUrl: 'logoUrl',
+  primaryColor: 'primaryColor',
+  secondaryColor: 'secondaryColor',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ClubScalarFieldEnum = (typeof ClubScalarFieldEnum)[keyof typeof ClubScalarFieldEnum]
+
+
 export const RoleScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -85,6 +111,7 @@ export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof Role
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  clubId: 'clubId',
   roleId: 'roleId',
   email: 'email',
   passwordHash: 'passwordHash',
@@ -100,6 +127,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const MemberScalarFieldEnum = {
   id: 'id',
+  clubId: 'clubId',
   userId: 'userId',
   membershipNumber: 'membershipNumber',
   phone: 'phone',

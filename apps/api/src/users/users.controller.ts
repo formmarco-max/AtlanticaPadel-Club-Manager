@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -31,6 +32,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersQueryDto } from './dto/users-query.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
@@ -53,12 +55,10 @@ export class UsersController {
     description: 'Utilizador criado com sucesso.',
   })
   @ApiBadRequestResponse({
-    description:
-      'Os dados enviados são inválidos.',
+    description: 'Os dados enviados são inválidos.',
   })
   @ApiUnauthorizedResponse({
-    description:
-      'Token JWT ausente, inválido ou expirado.',
+    description: 'Token JWT ausente, inválido ou expirado.',
   })
   @ApiForbiddenResponse({
     description:
@@ -80,13 +80,17 @@ export class UsersController {
 
   @Get()
   @ApiOperation({
-    summary: 'Obter todos os utilizadores',
+    summary: 'Obter utilizadores',
     description:
-      'Devolve todos os utilizadores sem expor os hashes das palavras-passe.',
+      'Devolve uma lista paginada de utilizadores, com pesquisa, filtros e ordenação, sem expor os hashes das palavras-passe.',
   })
   @ApiOkResponse({
     description:
-      'Lista de utilizadores devolvida com sucesso.',
+      'Lista paginada de utilizadores devolvida com sucesso.',
+  })
+  @ApiBadRequestResponse({
+    description:
+      'Os parâmetros de consulta são inválidos.',
   })
   @ApiUnauthorizedResponse({
     description:
@@ -96,8 +100,10 @@ export class UsersController {
     description:
       'O utilizador autenticado não possui permissão para consultar utilizadores.',
   })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query() queryDto: UsersQueryDto,
+  ) {
+    return this.usersService.findAll(queryDto);
   }
 
   @Get(':id')
@@ -112,8 +118,7 @@ export class UsersController {
     example: 'b521fa36-8fd0-4329-8f1b-d4c130ff32f5',
   })
   @ApiOkResponse({
-    description:
-      'Utilizador devolvido com sucesso.',
+    description: 'Utilizador devolvido com sucesso.',
   })
   @ApiBadRequestResponse({
     description:

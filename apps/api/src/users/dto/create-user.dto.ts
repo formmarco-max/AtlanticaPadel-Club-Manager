@@ -15,6 +15,15 @@ import {
 
 export class CreateUserDto {
   @ApiProperty({
+    description: 'Identificador UUID do clube ao qual o utilizador pertence.',
+    example: '2fdbf9c5-44be-4a50-928b-fca1a84ba2e7',
+  })
+  @IsUUID('4', {
+    message: 'O clubId deve ser um UUID válido.',
+  })
+  clubId: string;
+
+  @ApiProperty({
     description: 'Identificador UUID do perfil atribuído ao utilizador.',
     example: '8d78d6a4-a8d7-4a18-95b4-357f60ef1924',
   })
