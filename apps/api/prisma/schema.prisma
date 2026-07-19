@@ -89,7 +89,11 @@ model Member {
 
   membershipNumber String @unique @map("membership_number") @db.VarChar(30)
 
-  phone     String?   @db.VarChar(30)
+  firstName String  @map("first_name") @db.VarChar(100)
+  lastName  String  @map("last_name") @db.VarChar(100)
+  email     String? @db.VarChar(255)
+  phone     String? @db.VarChar(30)
+
   birthDate DateTime? @map("birth_date") @db.Date
   joinDate  DateTime  @default(now()) @map("join_date") @db.Date
 
