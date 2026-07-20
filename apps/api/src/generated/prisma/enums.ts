@@ -9,7 +9,27 @@
 * 🟢 You can import this file directly.
 */
 
+export const CourtSurfaceType = {
+  ARTIFICIAL_GRASS: 'ARTIFICIAL_GRASS',
+  CONCRETE: 'CONCRETE',
+  SYNTHETIC: 'SYNTHETIC',
+  OTHER: 'OTHER'
+} as const
+
+export type CourtSurfaceType = (typeof CourtSurfaceType)[keyof typeof CourtSurfaceType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const CourtType = {
+  SINGLES: 'SINGLES',
+  DOUBLES: 'DOUBLES'
+} as const
+
+export type CourtType = (typeof CourtType)[keyof typeof CourtType]
+
+
+export const CourtEnvironment = {
+  INDOOR: 'INDOOR',
+  OUTDOOR: 'OUTDOOR'
+} as const
+
+export type CourtEnvironment = (typeof CourtEnvironment)[keyof typeof CourtEnvironment]

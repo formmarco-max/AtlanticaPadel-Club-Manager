@@ -387,7 +387,8 @@ export const ModelName = {
   Club: 'Club',
   Role: 'Role',
   User: 'User',
-  Member: 'Member'
+  Member: 'Member',
+  Court: 'Court'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "club" | "role" | "user" | "member"
+    modelProps: "club" | "role" | "user" | "member" | "court"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -703,6 +704,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Court: {
+      payload: Prisma.$CourtPayload<ExtArgs>
+      fields: Prisma.CourtFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CourtFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CourtFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        findFirst: {
+          args: Prisma.CourtFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CourtFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        findMany: {
+          args: Prisma.CourtFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
+        }
+        create: {
+          args: Prisma.CourtCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        createMany: {
+          args: Prisma.CourtCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CourtCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
+        }
+        delete: {
+          args: Prisma.CourtDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        update: {
+          args: Prisma.CourtUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        deleteMany: {
+          args: Prisma.CourtDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CourtUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CourtUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>[]
+        }
+        upsert: {
+          args: Prisma.CourtUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourtPayload>
+        }
+        aggregate: {
+          args: Prisma.CourtAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCourt>
+        }
+        groupBy: {
+          args: Prisma.CourtGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourtGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CourtCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourtCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -814,6 +889,31 @@ export const MemberScalarFieldEnum = {
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
 
 
+export const CourtScalarFieldEnum = {
+  id: 'id',
+  clubId: 'clubId',
+  name: 'name',
+  description: 'description',
+  location: 'location',
+  surfaceType: 'surfaceType',
+  courtType: 'courtType',
+  environment: 'environment',
+  hourlyPrice: 'hourlyPrice',
+  openingTime: 'openingTime',
+  closingTime: 'closingTime',
+  defaultReservationDuration: 'defaultReservationDuration',
+  reservationInterval: 'reservationInterval',
+  hasLighting: 'hasLighting',
+  isUnderMaintenance: 'isUnderMaintenance',
+  maintenanceNotes: 'maintenanceNotes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourtScalarFieldEnum = (typeof CourtScalarFieldEnum)[keyof typeof CourtScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -880,6 +980,62 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'CourtSurfaceType'
+ */
+export type EnumCourtSurfaceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtSurfaceType'>
+    
+
+
+/**
+ * Reference to a field of type 'CourtSurfaceType[]'
+ */
+export type ListEnumCourtSurfaceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtSurfaceType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CourtType'
+ */
+export type EnumCourtTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtType'>
+    
+
+
+/**
+ * Reference to a field of type 'CourtType[]'
+ */
+export type ListEnumCourtTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CourtEnvironment'
+ */
+export type EnumCourtEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtEnvironment'>
+    
+
+
+/**
+ * Reference to a field of type 'CourtEnvironment[]'
+ */
+export type ListEnumCourtEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourtEnvironment[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -890,6 +1046,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 /**
@@ -1006,6 +1176,7 @@ export type GlobalOmitConfig = {
   role?: Prisma.RoleOmit
   user?: Prisma.UserOmit
   member?: Prisma.MemberOmit
+  court?: Prisma.CourtOmit
 }
 
 /* Types for Logging */

@@ -37,3 +37,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type Member = Prisma.MemberModel
+/**
+ * Model Court
+ * 
+ */
+export type Court = Prisma.CourtModel

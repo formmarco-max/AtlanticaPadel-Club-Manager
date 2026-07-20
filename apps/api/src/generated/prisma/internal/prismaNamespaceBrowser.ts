@@ -54,7 +54,8 @@ export const ModelName = {
   Club: 'Club',
   Role: 'Role',
   User: 'User',
-  Member: 'Member'
+  Member: 'Member',
+  Court: 'Court'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -143,6 +144,31 @@ export const MemberScalarFieldEnum = {
 } as const
 
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
+
+
+export const CourtScalarFieldEnum = {
+  id: 'id',
+  clubId: 'clubId',
+  name: 'name',
+  description: 'description',
+  location: 'location',
+  surfaceType: 'surfaceType',
+  courtType: 'courtType',
+  environment: 'environment',
+  hourlyPrice: 'hourlyPrice',
+  openingTime: 'openingTime',
+  closingTime: 'closingTime',
+  defaultReservationDuration: 'defaultReservationDuration',
+  reservationInterval: 'reservationInterval',
+  hasLighting: 'hasLighting',
+  isUnderMaintenance: 'isUnderMaintenance',
+  maintenanceNotes: 'maintenanceNotes',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourtScalarFieldEnum = (typeof CourtScalarFieldEnum)[keyof typeof CourtScalarFieldEnum]
 
 
 export const SortOrder = {

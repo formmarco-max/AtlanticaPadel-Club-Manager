@@ -296,6 +296,7 @@ export type ClubWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   users?: Prisma.UserListRelationFilter
   members?: Prisma.MemberListRelationFilter
+  courts?: Prisma.CourtListRelationFilter
 }
 
 export type ClubOrderByWithRelationInput = {
@@ -320,6 +321,7 @@ export type ClubOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   members?: Prisma.MemberOrderByRelationAggregateInput
+  courts?: Prisma.CourtOrderByRelationAggregateInput
 }
 
 export type ClubWhereUniqueInput = Prisma.AtLeast<{
@@ -347,6 +349,7 @@ export type ClubWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   users?: Prisma.UserListRelationFilter
   members?: Prisma.MemberListRelationFilter
+  courts?: Prisma.CourtListRelationFilter
 }, "id" | "name" | "slug">
 
 export type ClubOrderByWithAggregationInput = {
@@ -421,6 +424,7 @@ export type ClubCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtCreateNestedManyWithoutClubInput
 }
 
 export type ClubUncheckedCreateInput = {
@@ -445,6 +449,7 @@ export type ClubUncheckedCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
 }
 
 export type ClubUpdateInput = {
@@ -469,6 +474,7 @@ export type ClubUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
 }
 
 export type ClubUncheckedUpdateInput = {
@@ -493,6 +499,7 @@ export type ClubUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
 }
 
 export type ClubCreateManyInput = {
@@ -676,6 +683,20 @@ export type ClubUpdateOneRequiredWithoutMembersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClubUpdateToOneWithWhereWithoutMembersInput, Prisma.ClubUpdateWithoutMembersInput>, Prisma.ClubUncheckedUpdateWithoutMembersInput>
 }
 
+export type ClubCreateNestedOneWithoutCourtsInput = {
+  create?: Prisma.XOR<Prisma.ClubCreateWithoutCourtsInput, Prisma.ClubUncheckedCreateWithoutCourtsInput>
+  connectOrCreate?: Prisma.ClubCreateOrConnectWithoutCourtsInput
+  connect?: Prisma.ClubWhereUniqueInput
+}
+
+export type ClubUpdateOneRequiredWithoutCourtsNestedInput = {
+  create?: Prisma.XOR<Prisma.ClubCreateWithoutCourtsInput, Prisma.ClubUncheckedCreateWithoutCourtsInput>
+  connectOrCreate?: Prisma.ClubCreateOrConnectWithoutCourtsInput
+  upsert?: Prisma.ClubUpsertWithoutCourtsInput
+  connect?: Prisma.ClubWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClubUpdateToOneWithWhereWithoutCourtsInput, Prisma.ClubUpdateWithoutCourtsInput>, Prisma.ClubUncheckedUpdateWithoutCourtsInput>
+}
+
 export type ClubCreateWithoutUsersInput = {
   id?: string
   name: string
@@ -697,6 +718,7 @@ export type ClubCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtCreateNestedManyWithoutClubInput
 }
 
 export type ClubUncheckedCreateWithoutUsersInput = {
@@ -720,6 +742,7 @@ export type ClubUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
 }
 
 export type ClubCreateOrConnectWithoutUsersInput = {
@@ -759,6 +782,7 @@ export type ClubUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
 }
 
 export type ClubUncheckedUpdateWithoutUsersInput = {
@@ -782,6 +806,7 @@ export type ClubUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
 }
 
 export type ClubCreateWithoutMembersInput = {
@@ -805,6 +830,7 @@ export type ClubCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtCreateNestedManyWithoutClubInput
 }
 
 export type ClubUncheckedCreateWithoutMembersInput = {
@@ -828,6 +854,7 @@ export type ClubUncheckedCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
 }
 
 export type ClubCreateOrConnectWithoutMembersInput = {
@@ -867,6 +894,7 @@ export type ClubUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
 }
 
 export type ClubUncheckedUpdateWithoutMembersInput = {
@@ -890,6 +918,119 @@ export type ClubUncheckedUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
+}
+
+export type ClubCreateWithoutCourtsInput = {
+  id?: string
+  name: string
+  slug: string
+  email?: string | null
+  phone?: string | null
+  website?: string | null
+  description?: string | null
+  taxNumber?: string | null
+  address?: string | null
+  postalCode?: string | null
+  city?: string | null
+  district?: string | null
+  country?: string | null
+  logoUrl?: string | null
+  primaryColor?: string | null
+  secondaryColor?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutClubInput
+  members?: Prisma.MemberCreateNestedManyWithoutClubInput
+}
+
+export type ClubUncheckedCreateWithoutCourtsInput = {
+  id?: string
+  name: string
+  slug: string
+  email?: string | null
+  phone?: string | null
+  website?: string | null
+  description?: string | null
+  taxNumber?: string | null
+  address?: string | null
+  postalCode?: string | null
+  city?: string | null
+  district?: string | null
+  country?: string | null
+  logoUrl?: string | null
+  primaryColor?: string | null
+  secondaryColor?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+}
+
+export type ClubCreateOrConnectWithoutCourtsInput = {
+  where: Prisma.ClubWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClubCreateWithoutCourtsInput, Prisma.ClubUncheckedCreateWithoutCourtsInput>
+}
+
+export type ClubUpsertWithoutCourtsInput = {
+  update: Prisma.XOR<Prisma.ClubUpdateWithoutCourtsInput, Prisma.ClubUncheckedUpdateWithoutCourtsInput>
+  create: Prisma.XOR<Prisma.ClubCreateWithoutCourtsInput, Prisma.ClubUncheckedCreateWithoutCourtsInput>
+  where?: Prisma.ClubWhereInput
+}
+
+export type ClubUpdateToOneWithWhereWithoutCourtsInput = {
+  where?: Prisma.ClubWhereInput
+  data: Prisma.XOR<Prisma.ClubUpdateWithoutCourtsInput, Prisma.ClubUncheckedUpdateWithoutCourtsInput>
+}
+
+export type ClubUpdateWithoutCourtsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutClubNestedInput
+  members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+}
+
+export type ClubUncheckedUpdateWithoutCourtsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
+  members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
 }
 
 
@@ -900,11 +1041,13 @@ export type ClubUncheckedUpdateWithoutMembersInput = {
 export type ClubCountOutputType = {
   users: number
   members: number
+  courts: number
 }
 
 export type ClubCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | ClubCountOutputTypeCountUsersArgs
   members?: boolean | ClubCountOutputTypeCountMembersArgs
+  courts?: boolean | ClubCountOutputTypeCountCourtsArgs
 }
 
 /**
@@ -931,6 +1074,13 @@ export type ClubCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.MemberWhereInput
 }
 
+/**
+ * ClubCountOutputType without action
+ */
+export type ClubCountOutputTypeCountCourtsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CourtWhereInput
+}
+
 
 export type ClubSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -954,6 +1104,7 @@ export type ClubSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   users?: boolean | Prisma.Club$usersArgs<ExtArgs>
   members?: boolean | Prisma.Club$membersArgs<ExtArgs>
+  courts?: boolean | Prisma.Club$courtsArgs<ExtArgs>
   _count?: boolean | Prisma.ClubCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["club"]>
 
@@ -1027,6 +1178,7 @@ export type ClubOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type ClubInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Club$usersArgs<ExtArgs>
   members?: boolean | Prisma.Club$membersArgs<ExtArgs>
+  courts?: boolean | Prisma.Club$courtsArgs<ExtArgs>
   _count?: boolean | Prisma.ClubCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ClubIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1037,6 +1189,7 @@ export type $ClubPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     members: Prisma.$MemberPayload<ExtArgs>[]
+    courts: Prisma.$CourtPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1454,6 +1607,7 @@ export interface Prisma__ClubClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Club$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   members<T extends Prisma.Club$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  courts<T extends Prisma.Club$courtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$courtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CourtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1940,6 +2094,30 @@ export type Club$membersArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.MemberScalarFieldEnum | Prisma.MemberScalarFieldEnum[]
+}
+
+/**
+ * Club.courts
+ */
+export type Club$courtsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Court
+   */
+  select?: Prisma.CourtSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Court
+   */
+  omit?: Prisma.CourtOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CourtInclude<ExtArgs> | null
+  where?: Prisma.CourtWhereInput
+  orderBy?: Prisma.CourtOrderByWithRelationInput | Prisma.CourtOrderByWithRelationInput[]
+  cursor?: Prisma.CourtWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CourtScalarFieldEnum | Prisma.CourtScalarFieldEnum[]
 }
 
 /**
