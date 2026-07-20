@@ -42,3 +42,8 @@ export type Member = Prisma.MemberModel
  * 
  */
 export type Court = Prisma.CourtModel
+/**
+ * Model Reservation
+ * 
+ */
+export type Reservation = Prisma.ReservationModel

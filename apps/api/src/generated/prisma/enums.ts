@@ -33,3 +33,14 @@ export const CourtEnvironment = {
 } as const
 
 export type CourtEnvironment = (typeof CourtEnvironment)[keyof typeof CourtEnvironment]
+
+
+export const ReservationStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+  NO_SHOW: 'NO_SHOW'
+} as const
+
+export type ReservationStatus = (typeof ReservationStatus)[keyof typeof ReservationStatus]
