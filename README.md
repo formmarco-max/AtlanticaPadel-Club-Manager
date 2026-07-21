@@ -39,7 +39,49 @@ O APCM tem como objetivo disponibilizar uma solução completa para clubes de pa
 
 # 🚀 Estado do Projeto
 
-**Versão atual:** `v0.7.0`
+**Versão atual:** `v0.8.0`
+
+O backend encontra-se funcional e implementa o núcleo da plataforma.
+
+O frontend encontra-se em desenvolvimento ativo, estando já disponível uma primeira versão totalmente funcional baseada em **Next.js**, com autenticação, dashboard e gestão de sócios.
+
+### Backend
+
+- ✅ Autenticação JWT
+- ✅ Autorização por Perfis
+- ✅ Utilizadores
+- ✅ Clubes
+- ✅ Sócios
+- ✅ Treinadores
+- ✅ Campos
+- ✅ Reservas
+- ✅ Dashboard
+- ✅ Swagger
+
+### Frontend
+
+- ✅ Login
+- ✅ Gestão de Sessão (JWT)
+- ✅ Dashboard
+- ✅ Sidebar
+- ✅ Header
+- ✅ Página de Sócios
+- ✅ DataTable Genérica
+- ✅ Pesquisa
+- ✅ Ordenação
+- ✅ Badges de Estado
+- ✅ Estrutura modular por Features
+
+### Em desenvolvimento
+
+- 🚧 CRUD de Sócios
+- 🚧 CRUD de Treinadores
+- 🚧 CRUD de Campos
+- 🚧 CRUD de Reservas
+- 🚧 Dashboard Avançado
+- 🚧 Rebranding / Design System
+
+**Versão atual:** `v0.8.0`
 
 O backend encontra-se funcional e já implementa todo o núcleo da aplicação.
 
@@ -145,10 +187,16 @@ Os próximos desenvolvimentos estarão focados nas funcionalidades avançadas, i
 
 ## Frontend
 
-- Next.js
-- React
+- Next.js 16
+- React 19
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS v4
+- Shadcn/UI
+- Axios
+- React Hook Form
+- Zod
+- TanStack Table
+- Lucide React
 
 ## Backend
 
@@ -213,32 +261,33 @@ O backend segue uma arquitetura modular baseada em **NestJS**, onde cada domíni
 ```text
 AtlanticaPadel-Club-Manager/
 
+apps/
+├── api/
+│   ├── prisma/
+│   └── src/
+│       ├── auth/
+│       ├── clubs/
+│       ├── coaches/
+│       ├── courts/
+│       ├── dashboard/
+│       ├── members/
+│       ├── reservations/
+│       ├── roles/
+│       ├── users/
+│       └── ...
 │
-├── apps/
-│   ├── api/
-│   │   ├── prisma/
-│   │   │   ├── migrations/
-│   │   │   ├── schema.prisma
-│   │   │   └── seed.ts
-│   │   │
-│   │   └── src/
-│   │       ├── auth/
-│   │       ├── clubs/
-│   │       ├── courts/
-│   │       ├── members/
-│   │       ├── reservations/
-│   │       ├── roles/
-│   │       ├── users/
-│   │       ├── prisma/
-│   │       ├── app.module.ts
-│   │       └── main.ts
-│   │
-│   └── web/
-│
-├── docs/
-│
-└── README.md
-```
+└── web/
+    ├── app/
+    ├── components/
+    │   ├── common/
+    │   ├── layout/
+    │   └── ui/
+    ├── contexts/
+    ├── features/
+    │   └── members/
+    ├── hooks/
+    ├── lib/
+    └── types/
 
 A arquitetura foi desenhada para permitir a evolução do sistema através de módulos independentes, facilitando a manutenção e futura expansão da plataforma.
 
@@ -342,11 +391,11 @@ A arquitetura foi desenhada para permitir a evolução do sistema através de m�
 | Gestão de Sócios | ✅ |
 | Gestão de Campos | ✅ |
 | Gestão de Reservas | ✅ |
-| Gestão de Treinadores | ⏳ |
+| Gestão de Treinadores | ✅ |
 | Gestão de Funcionários | ⏳ |
 | Gestão de Aulas | ⏳ |
-| Dashboard | ⏳ |
-| Frontend | ⏳ |
+| Dashboard | ✅ |
+| Frontend | ✅ Base implementada | 
 | Inteligência Artificial | ⏳ |
 
 ---
@@ -464,32 +513,6 @@ Entre as principais validações encontram-se:
 Estas regras encontram-se implementadas ao nível da camada de serviços (Service Layer), garantindo que são aplicadas independentemente do cliente que consuma a API.
 
 ---
-
-# 📌 Estado Atual
-
-Atualmente o **Atlantica Padel Club Manager** dispõe de um backend funcional com o núcleo da aplicação concluído.
-
-Encontra-se implementado:
-
-- Arquitetura modular em NestJS
-- Base de Dados PostgreSQL
-- Prisma ORM
-- Autenticação JWT
-- Autorização baseada em perfis
-- Documentação Swagger
-- CRUD completo de Utilizadores
-- CRUD completo de Clubes
-- CRUD completo de Sócios
-- CRUD completo de Campos
-- CRUD completo de Reservas
-- Regras de negócio para gestão de reservas
-- Seed inicial da base de dados
-
-O projeto encontra-se preparado para a implementação das restantes funcionalidades de gestão e para o desenvolvimento da aplicação frontend.
-
----
-
-# 🚀 Próximos Desenvolvimentos
 
 Os próximos módulos previstos incluem:
 
