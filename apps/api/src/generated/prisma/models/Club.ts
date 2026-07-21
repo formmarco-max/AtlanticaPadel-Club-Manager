@@ -296,6 +296,7 @@ export type ClubWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   users?: Prisma.UserListRelationFilter
   members?: Prisma.MemberListRelationFilter
+  coaches?: Prisma.CoachListRelationFilter
   courts?: Prisma.CourtListRelationFilter
   reservations?: Prisma.ReservationListRelationFilter
 }
@@ -322,6 +323,7 @@ export type ClubOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   users?: Prisma.UserOrderByRelationAggregateInput
   members?: Prisma.MemberOrderByRelationAggregateInput
+  coaches?: Prisma.CoachOrderByRelationAggregateInput
   courts?: Prisma.CourtOrderByRelationAggregateInput
   reservations?: Prisma.ReservationOrderByRelationAggregateInput
 }
@@ -351,6 +353,7 @@ export type ClubWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Club"> | Date | string
   users?: Prisma.UserListRelationFilter
   members?: Prisma.MemberListRelationFilter
+  coaches?: Prisma.CoachListRelationFilter
   courts?: Prisma.CourtListRelationFilter
   reservations?: Prisma.ReservationListRelationFilter
 }, "id" | "name" | "slug">
@@ -427,6 +430,7 @@ export type ClubCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutClubInput
 }
@@ -453,6 +457,7 @@ export type ClubUncheckedCreateInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutClubInput
 }
@@ -479,6 +484,7 @@ export type ClubUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutClubNestedInput
 }
@@ -505,6 +511,7 @@ export type ClubUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUncheckedUpdateManyWithoutClubNestedInput
 }
@@ -690,6 +697,20 @@ export type ClubUpdateOneRequiredWithoutMembersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ClubUpdateToOneWithWhereWithoutMembersInput, Prisma.ClubUpdateWithoutMembersInput>, Prisma.ClubUncheckedUpdateWithoutMembersInput>
 }
 
+export type ClubCreateNestedOneWithoutCoachesInput = {
+  create?: Prisma.XOR<Prisma.ClubCreateWithoutCoachesInput, Prisma.ClubUncheckedCreateWithoutCoachesInput>
+  connectOrCreate?: Prisma.ClubCreateOrConnectWithoutCoachesInput
+  connect?: Prisma.ClubWhereUniqueInput
+}
+
+export type ClubUpdateOneRequiredWithoutCoachesNestedInput = {
+  create?: Prisma.XOR<Prisma.ClubCreateWithoutCoachesInput, Prisma.ClubUncheckedCreateWithoutCoachesInput>
+  connectOrCreate?: Prisma.ClubCreateOrConnectWithoutCoachesInput
+  upsert?: Prisma.ClubUpsertWithoutCoachesInput
+  connect?: Prisma.ClubWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ClubUpdateToOneWithWhereWithoutCoachesInput, Prisma.ClubUpdateWithoutCoachesInput>, Prisma.ClubUncheckedUpdateWithoutCoachesInput>
+}
+
 export type ClubCreateNestedOneWithoutCourtsInput = {
   create?: Prisma.XOR<Prisma.ClubCreateWithoutCourtsInput, Prisma.ClubUncheckedCreateWithoutCourtsInput>
   connectOrCreate?: Prisma.ClubCreateOrConnectWithoutCourtsInput
@@ -739,6 +760,7 @@ export type ClubCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutClubInput
 }
@@ -764,6 +786,7 @@ export type ClubUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutClubInput
 }
@@ -805,6 +828,7 @@ export type ClubUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutClubNestedInput
 }
@@ -830,6 +854,7 @@ export type ClubUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUncheckedUpdateManyWithoutClubNestedInput
 }
@@ -855,6 +880,7 @@ export type ClubCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutClubInput
 }
@@ -880,6 +906,7 @@ export type ClubUncheckedCreateWithoutMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutClubInput
 }
@@ -921,6 +948,7 @@ export type ClubUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutClubNestedInput
 }
@@ -946,6 +974,127 @@ export type ClubUncheckedUpdateWithoutMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
+  reservations?: Prisma.ReservationUncheckedUpdateManyWithoutClubNestedInput
+}
+
+export type ClubCreateWithoutCoachesInput = {
+  id?: string
+  name: string
+  slug: string
+  email?: string | null
+  phone?: string | null
+  website?: string | null
+  description?: string | null
+  taxNumber?: string | null
+  address?: string | null
+  postalCode?: string | null
+  city?: string | null
+  district?: string | null
+  country?: string | null
+  logoUrl?: string | null
+  primaryColor?: string | null
+  secondaryColor?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserCreateNestedManyWithoutClubInput
+  members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtCreateNestedManyWithoutClubInput
+  reservations?: Prisma.ReservationCreateNestedManyWithoutClubInput
+}
+
+export type ClubUncheckedCreateWithoutCoachesInput = {
+  id?: string
+  name: string
+  slug: string
+  email?: string | null
+  phone?: string | null
+  website?: string | null
+  description?: string | null
+  taxNumber?: string | null
+  address?: string | null
+  postalCode?: string | null
+  city?: string | null
+  district?: string | null
+  country?: string | null
+  logoUrl?: string | null
+  primaryColor?: string | null
+  secondaryColor?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
+  members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
+  reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutClubInput
+}
+
+export type ClubCreateOrConnectWithoutCoachesInput = {
+  where: Prisma.ClubWhereUniqueInput
+  create: Prisma.XOR<Prisma.ClubCreateWithoutCoachesInput, Prisma.ClubUncheckedCreateWithoutCoachesInput>
+}
+
+export type ClubUpsertWithoutCoachesInput = {
+  update: Prisma.XOR<Prisma.ClubUpdateWithoutCoachesInput, Prisma.ClubUncheckedUpdateWithoutCoachesInput>
+  create: Prisma.XOR<Prisma.ClubCreateWithoutCoachesInput, Prisma.ClubUncheckedCreateWithoutCoachesInput>
+  where?: Prisma.ClubWhereInput
+}
+
+export type ClubUpdateToOneWithWhereWithoutCoachesInput = {
+  where?: Prisma.ClubWhereInput
+  data: Prisma.XOR<Prisma.ClubUpdateWithoutCoachesInput, Prisma.ClubUncheckedUpdateWithoutCoachesInput>
+}
+
+export type ClubUpdateWithoutCoachesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUpdateManyWithoutClubNestedInput
+  members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
+  reservations?: Prisma.ReservationUpdateManyWithoutClubNestedInput
+}
+
+export type ClubUncheckedUpdateWithoutCoachesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  secondaryColor?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
+  members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUncheckedUpdateManyWithoutClubNestedInput
 }
@@ -972,6 +1121,7 @@ export type ClubCreateWithoutCourtsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationCreateNestedManyWithoutClubInput
 }
 
@@ -997,6 +1147,7 @@ export type ClubUncheckedCreateWithoutCourtsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutClubInput
   reservations?: Prisma.ReservationUncheckedCreateNestedManyWithoutClubInput
 }
 
@@ -1038,6 +1189,7 @@ export type ClubUpdateWithoutCourtsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUpdateManyWithoutClubNestedInput
 }
 
@@ -1063,6 +1215,7 @@ export type ClubUncheckedUpdateWithoutCourtsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutClubNestedInput
   reservations?: Prisma.ReservationUncheckedUpdateManyWithoutClubNestedInput
 }
 
@@ -1088,6 +1241,7 @@ export type ClubCreateWithoutReservationsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserCreateNestedManyWithoutClubInput
   members?: Prisma.MemberCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtCreateNestedManyWithoutClubInput
 }
 
@@ -1113,6 +1267,7 @@ export type ClubUncheckedCreateWithoutReservationsInput = {
   updatedAt?: Date | string
   users?: Prisma.UserUncheckedCreateNestedManyWithoutClubInput
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutClubInput
+  coaches?: Prisma.CoachUncheckedCreateNestedManyWithoutClubInput
   courts?: Prisma.CourtUncheckedCreateNestedManyWithoutClubInput
 }
 
@@ -1154,6 +1309,7 @@ export type ClubUpdateWithoutReservationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUpdateManyWithoutClubNestedInput
 }
 
@@ -1179,6 +1335,7 @@ export type ClubUncheckedUpdateWithoutReservationsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   users?: Prisma.UserUncheckedUpdateManyWithoutClubNestedInput
   members?: Prisma.MemberUncheckedUpdateManyWithoutClubNestedInput
+  coaches?: Prisma.CoachUncheckedUpdateManyWithoutClubNestedInput
   courts?: Prisma.CourtUncheckedUpdateManyWithoutClubNestedInput
 }
 
@@ -1190,6 +1347,7 @@ export type ClubUncheckedUpdateWithoutReservationsInput = {
 export type ClubCountOutputType = {
   users: number
   members: number
+  coaches: number
   courts: number
   reservations: number
 }
@@ -1197,6 +1355,7 @@ export type ClubCountOutputType = {
 export type ClubCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | ClubCountOutputTypeCountUsersArgs
   members?: boolean | ClubCountOutputTypeCountMembersArgs
+  coaches?: boolean | ClubCountOutputTypeCountCoachesArgs
   courts?: boolean | ClubCountOutputTypeCountCourtsArgs
   reservations?: boolean | ClubCountOutputTypeCountReservationsArgs
 }
@@ -1223,6 +1382,13 @@ export type ClubCountOutputTypeCountUsersArgs<ExtArgs extends runtime.Types.Exte
  */
 export type ClubCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MemberWhereInput
+}
+
+/**
+ * ClubCountOutputType without action
+ */
+export type ClubCountOutputTypeCountCoachesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoachWhereInput
 }
 
 /**
@@ -1262,6 +1428,7 @@ export type ClubSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   users?: boolean | Prisma.Club$usersArgs<ExtArgs>
   members?: boolean | Prisma.Club$membersArgs<ExtArgs>
+  coaches?: boolean | Prisma.Club$coachesArgs<ExtArgs>
   courts?: boolean | Prisma.Club$courtsArgs<ExtArgs>
   reservations?: boolean | Prisma.Club$reservationsArgs<ExtArgs>
   _count?: boolean | Prisma.ClubCountOutputTypeDefaultArgs<ExtArgs>
@@ -1337,6 +1504,7 @@ export type ClubOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type ClubInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   users?: boolean | Prisma.Club$usersArgs<ExtArgs>
   members?: boolean | Prisma.Club$membersArgs<ExtArgs>
+  coaches?: boolean | Prisma.Club$coachesArgs<ExtArgs>
   courts?: boolean | Prisma.Club$courtsArgs<ExtArgs>
   reservations?: boolean | Prisma.Club$reservationsArgs<ExtArgs>
   _count?: boolean | Prisma.ClubCountOutputTypeDefaultArgs<ExtArgs>
@@ -1349,6 +1517,7 @@ export type $ClubPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     users: Prisma.$UserPayload<ExtArgs>[]
     members: Prisma.$MemberPayload<ExtArgs>[]
+    coaches: Prisma.$CoachPayload<ExtArgs>[]
     courts: Prisma.$CourtPayload<ExtArgs>[]
     reservations: Prisma.$ReservationPayload<ExtArgs>[]
   }
@@ -1768,6 +1937,7 @@ export interface Prisma__ClubClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   users<T extends Prisma.Club$usersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$usersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   members<T extends Prisma.Club$membersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$membersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  coaches<T extends Prisma.Club$coachesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$coachesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoachPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   courts<T extends Prisma.Club$courtsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$courtsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CourtPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reservations<T extends Prisma.Club$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Club$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2256,6 +2426,30 @@ export type Club$membersArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.MemberScalarFieldEnum | Prisma.MemberScalarFieldEnum[]
+}
+
+/**
+ * Club.coaches
+ */
+export type Club$coachesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Coach
+   */
+  select?: Prisma.CoachSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Coach
+   */
+  omit?: Prisma.CoachOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoachInclude<ExtArgs> | null
+  where?: Prisma.CoachWhereInput
+  orderBy?: Prisma.CoachOrderByWithRelationInput | Prisma.CoachOrderByWithRelationInput[]
+  cursor?: Prisma.CoachWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoachScalarFieldEnum | Prisma.CoachScalarFieldEnum[]
 }
 
 /**

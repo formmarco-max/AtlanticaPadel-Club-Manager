@@ -388,6 +388,7 @@ export const ModelName = {
   Role: 'Role',
   User: 'User',
   Member: 'Member',
+  Coach: 'Coach',
   Court: 'Court',
   Reservation: 'Reservation'
 } as const
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "club" | "role" | "user" | "member" | "court" | "reservation"
+    modelProps: "club" | "role" | "user" | "member" | "coach" | "court" | "reservation"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -705,6 +706,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Coach: {
+      payload: Prisma.$CoachPayload<ExtArgs>
+      fields: Prisma.CoachFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoachFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoachFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        findFirst: {
+          args: Prisma.CoachFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoachFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        findMany: {
+          args: Prisma.CoachFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
+        }
+        create: {
+          args: Prisma.CoachCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        createMany: {
+          args: Prisma.CoachCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoachCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
+        }
+        delete: {
+          args: Prisma.CoachDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        update: {
+          args: Prisma.CoachUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        deleteMany: {
+          args: Prisma.CoachDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoachUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoachUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>[]
+        }
+        upsert: {
+          args: Prisma.CoachUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoachPayload>
+        }
+        aggregate: {
+          args: Prisma.CoachAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoach>
+        }
+        groupBy: {
+          args: Prisma.CoachGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoachCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoachCountAggregateOutputType> | number
+        }
+      }
+    }
     Court: {
       payload: Prisma.$CourtPayload<ExtArgs>
       fields: Prisma.CourtFieldRefs
@@ -962,6 +1037,26 @@ export const MemberScalarFieldEnum = {
 } as const
 
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
+
+
+export const CoachScalarFieldEnum = {
+  id: 'id',
+  employeeNumber: 'employeeNumber',
+  clubId: 'clubId',
+  userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  email: 'email',
+  phone: 'phone',
+  specialization: 'specialization',
+  biography: 'biography',
+  hireDate: 'hireDate',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CoachScalarFieldEnum = (typeof CoachScalarFieldEnum)[keyof typeof CoachScalarFieldEnum]
 
 
 export const CourtScalarFieldEnum = {
@@ -1284,6 +1379,7 @@ export type GlobalOmitConfig = {
   role?: Prisma.RoleOmit
   user?: Prisma.UserOmit
   member?: Prisma.MemberOmit
+  coach?: Prisma.CoachOmit
   court?: Prisma.CourtOmit
   reservation?: Prisma.ReservationOmit
 }
