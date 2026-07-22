@@ -52,10 +52,10 @@ export function AppSidebar() {
         <Image
           src="/images/logo-apcm.png"
           alt="Atlantica Padel Club Manager"
-          width={150}
-          height={104}
+          width={250}
+          height={140}
           priority
-          className="h-auto max-h-[104px] w-auto max-w-full object-contain"
+          className="h-auto max-h-[190px] w-auto max-w-full object-contain"
         />
       </div>
 
