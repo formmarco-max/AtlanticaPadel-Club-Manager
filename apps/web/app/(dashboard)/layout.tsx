@@ -44,7 +44,7 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-muted/30">
       <AppSidebar />
 
-      <div className="lg:pl-64">
+      <div className="lg:pl-[270px]">
         <AppHeader />
 
         <main className="p-4 sm:p-6 lg:p-8">
