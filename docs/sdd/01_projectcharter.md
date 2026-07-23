@@ -1,14 +1,10 @@
 # Project Charter
 
-# AtlanticaPadel Club Manager (APCM)
+# Atlantica Padel Club Manager (APCM)
 
 ## 1. Project Overview
 
-O AtlanticaPadel Club Manager (APCM) é uma plataforma web desenvolvida no âmbito do Projeto Final da Licenciatura em Gestão de Sistemas e Computação da Universidade Atlântica.
-
-O projeto pretende disponibilizar uma solução moderna para a gestão integrada de academias de pádel, centralizando processos administrativos e operacionais numa única plataforma.
-
-A aplicação permitirá gerir reservas de campos, sócios, treinadores, aulas e indicadores de gestão, proporcionando uma experiência simples, intuitiva e eficiente para todos os intervenientes.
+O APCM é uma plataforma web moderna desenvolvida segundo uma arquitetura full-stack, composta por um frontend em Next.js, um backend em NestJS e uma base de dados PostgreSQL. A aplicação centraliza toda a gestão operacional de clubes de padel através de uma interface moderna, segura e escaláve.
 
 ---
 
@@ -30,13 +26,12 @@ Desenvolver uma plataforma web para gestão integrada de academias de pádel.
 
 ### Objetivos Específicos
 
-- Gerir sócios
-- Gerir treinadores
-- Gerir reservas de campos
-- Gerir aulas
-- Disponibilizar um dashboard administrativo
-- Implementar autenticação de utilizadores
-- Desenvolver uma interface moderna e intuitiva
+Gestão de utilizadores e perfis
+Gestão de permissões (RBAC)
+Gestão de reservas
+Dashboard analítico
+API documentada com Swagger
+Arquitetura escalável
 
 ---
 
@@ -73,7 +68,7 @@ Universidade Atlântica
 
 ### Cliente (Caso de Estudo)
 
-AtlanticaPadel
+Atlantica Padel Club
 
 ### Utilizadores Finais
 

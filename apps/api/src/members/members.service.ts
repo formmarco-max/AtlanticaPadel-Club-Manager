@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -13,10 +14,13 @@ export class MembersService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Devolve todos os sócios registados.
+   * Devolve todos os sócios pertencentes ao clube indicado.
    */
-  async findAll() {
+  async findAll(clubId: string) {
     return this.prisma.member.findMany({
+      where: {
+        clubId,
+      },
       include: {
         club: {
           select: {
@@ -29,6 +33,8 @@ export class MembersService {
           select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -44,12 +50,13 @@ export class MembersService {
   }
 
   /**
-   * Devolve um sócio através do seu identificador.
+   * Devolve um sócio pertencente ao clube indicado.
    */
-  async findOne(id: string) {
-    const member = await this.prisma.member.findUnique({
+  async findOne(id: string, clubId: string) {
+    const member = await this.prisma.member.findFirst({
       where: {
         id,
+        clubId,
       },
       include: {
         club: {
@@ -63,6 +70,8 @@ export class MembersService {
           select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -70,7 +79,7 @@ export class MembersService {
 
     if (!member) {
       throw new NotFoundException(
-        `Não foi encontrado nenhum sócio com o ID "${id}".`,
+        `Não foi encontrado nenhum sócio com o ID "${id}" neste clube.`,
       );
     }
 
@@ -78,11 +87,13 @@ export class MembersService {
   }
 
   /**
-   * Cria um novo sócio.
+   * Cria um novo sócio no clube indicado.
    */
-  async create(createMemberDto: CreateMemberDto) {
+  async create(
+    clubId: string,
+    createMemberDto: CreateMemberDto,
+  ) {
     const {
-      clubId,
       userId,
       membershipNumber,
       firstName,
@@ -95,26 +106,34 @@ export class MembersService {
       isActive,
     } = createMemberDto;
 
-    await this.ensureClubExists(clubId);
-    await this.ensureMembershipNumberIsAvailable(membershipNumber);
+    await this.ensureMembershipNumberIsAvailable(
+      membershipNumber,
+    );
 
     if (userId) {
-      await this.ensureUserCanBeAssociated(userId, clubId);
+      await this.ensureUserCanBeAssociated(
+        userId,
+        clubId,
+      );
     }
 
     return this.prisma.member.create({
       data: {
         clubId,
         userId,
-        membershipNumber,
-        firstName,
-        lastName,
-        email,
-        phone,
-        birthDate: birthDate ? new Date(birthDate) : undefined,
-        joinDate: joinDate ? new Date(joinDate) : undefined,
-        notes,
-        isActive,
+        membershipNumber: membershipNumber.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email?.trim().toLowerCase(),
+        phone: phone?.trim(),
+        birthDate: birthDate
+          ? new Date(birthDate)
+          : undefined,
+        joinDate: joinDate
+          ? new Date(joinDate)
+          : undefined,
+        notes: notes?.trim(),
+        isActive: isActive ?? true,
       },
       include: {
         club: {
@@ -128,6 +147,8 @@ export class MembersService {
           select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -135,13 +156,16 @@ export class MembersService {
   }
 
   /**
-   * Atualiza os dados de um sócio.
+   * Atualiza um sócio pertencente ao clube indicado.
    */
-  async update(id: string, updateMemberDto: UpdateMemberDto) {
-    const currentMember = await this.findOne(id);
+  async update(
+    id: string,
+    clubId: string,
+    updateMemberDto: UpdateMemberDto,
+  ) {
+    const currentMember = await this.findOne(id, clubId);
 
     const {
-      clubId,
       userId,
       membershipNumber,
       firstName,
@@ -154,21 +178,25 @@ export class MembersService {
       isActive,
     } = updateMemberDto;
 
-    const targetClubId = clubId ?? currentMember.clubId;
-
-    if (clubId) {
-      await this.ensureClubExists(clubId);
-    }
-
     if (
       membershipNumber &&
       membershipNumber !== currentMember.membershipNumber
     ) {
-      await this.ensureMembershipNumberIsAvailable(membershipNumber, id);
+      await this.ensureMembershipNumberIsAvailable(
+        membershipNumber,
+        id,
+      );
     }
 
-    if (userId && userId !== currentMember.userId) {
-      await this.ensureUserCanBeAssociated(userId, targetClubId, id);
+    if (
+      userId &&
+      userId !== currentMember.userId
+    ) {
+      await this.ensureUserCanBeAssociated(
+        userId,
+        clubId,
+        id,
+      );
     }
 
     return this.prisma.member.update({
@@ -176,17 +204,39 @@ export class MembersService {
         id,
       },
       data: {
-        clubId,
         userId,
-        membershipNumber,
-        firstName,
-        lastName,
-        email,
-        phone,
+        membershipNumber:
+          membershipNumber !== undefined
+            ? membershipNumber.trim()
+            : undefined,
+        firstName:
+          firstName !== undefined
+            ? firstName.trim()
+            : undefined,
+        lastName:
+          lastName !== undefined
+            ? lastName.trim()
+            : undefined,
+        email:
+          email !== undefined
+            ? email.trim().toLowerCase()
+            : undefined,
+        phone:
+          phone !== undefined
+            ? phone.trim()
+            : undefined,
         birthDate:
-          birthDate !== undefined ? new Date(birthDate) : undefined,
-        joinDate: joinDate !== undefined ? new Date(joinDate) : undefined,
-        notes,
+          birthDate !== undefined
+            ? new Date(birthDate)
+            : undefined,
+        joinDate:
+          joinDate !== undefined
+            ? new Date(joinDate)
+            : undefined,
+        notes:
+          notes !== undefined
+            ? notes.trim()
+            : undefined,
         isActive,
       },
       include: {
@@ -201,6 +251,8 @@ export class MembersService {
           select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -208,10 +260,10 @@ export class MembersService {
   }
 
   /**
-   * Remove permanentemente um sócio.
+   * Remove permanentemente um sócio pertencente ao clube indicado.
    */
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clubId: string) {
+    await this.findOne(id, clubId);
 
     return this.prisma.member.delete({
       where: {
@@ -229,30 +281,12 @@ export class MembersService {
           select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
     });
-  }
-
-  /**
-   * Confirma que o clube existe.
-   */
-  private async ensureClubExists(clubId: string): Promise<void> {
-    const club = await this.prisma.club.findUnique({
-      where: {
-        id: clubId,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!club) {
-      throw new BadRequestException(
-        `Não foi encontrado nenhum clube com o ID "${clubId}".`,
-      );
-    }
   }
 
   /**
@@ -262,25 +296,32 @@ export class MembersService {
     membershipNumber: string,
     excludedMemberId?: string,
   ): Promise<void> {
-    const existingMember = await this.prisma.member.findUnique({
-      where: {
-        membershipNumber,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const normalizedMembershipNumber =
+      membershipNumber.trim();
 
-    if (existingMember && existingMember.id !== excludedMemberId) {
+    const existingMember =
+      await this.prisma.member.findUnique({
+        where: {
+          membershipNumber: normalizedMembershipNumber,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+    if (
+      existingMember &&
+      existingMember.id !== excludedMemberId
+    ) {
       throw new ConflictException(
-        `Já existe um sócio com o número "${membershipNumber}".`,
+        `Já existe um sócio com o número "${normalizedMembershipNumber}".`,
       );
     }
   }
 
   /**
-   * Confirma que o utilizador existe, pertence ao mesmo clube e ainda não
-   * está associado a outro sócio.
+   * Confirma que o utilizador existe, pertence ao mesmo clube
+   * e ainda não está associado a outro sócio.
    */
   private async ensureUserCanBeAssociated(
     userId: string,
@@ -309,16 +350,20 @@ export class MembersService {
       );
     }
 
-    const associatedMember = await this.prisma.member.findUnique({
-      where: {
-        userId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const associatedMember =
+      await this.prisma.member.findUnique({
+        where: {
+          userId,
+        },
+        select: {
+          id: true,
+        },
+      });
 
-    if (associatedMember && associatedMember.id !== excludedMemberId) {
+    if (
+      associatedMember &&
+      associatedMember.id !== excludedMemberId
+    ) {
       throw new ConflictException(
         'O utilizador indicado já está associado a outro sócio.',
       );

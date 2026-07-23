@@ -9,6 +9,7 @@ type JwtPayload = {
   sub: string;
   email: string;
   role: string;
+  clubId: string;
 };
 
 type LoginResponse = {
@@ -21,6 +22,7 @@ type LoginResponse = {
     firstName: string;
     lastName: string;
     role: string;
+    clubId: string;
   };
 };
 
@@ -46,7 +48,9 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
-      throw new UnauthorizedException('Email ou palavra-passe inválidos.');
+      throw new UnauthorizedException(
+        'Email ou palavra-passe inválidos.',
+      );
     }
 
     const passwordIsValid = await bcrypt.compare(
@@ -55,13 +59,16 @@ export class AuthService {
     );
 
     if (!passwordIsValid) {
-      throw new UnauthorizedException('Email ou palavra-passe inválidos.');
+      throw new UnauthorizedException(
+        'Email ou palavra-passe inválidos.',
+      );
     }
 
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       role: user.role.name,
+      clubId: user.clubId,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
@@ -76,6 +83,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role.name,
+        clubId: user.clubId,
       },
     };
   }

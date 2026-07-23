@@ -21,9 +21,12 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import type { AuthenticatedUser } from '../auth/strategies/jwt.strategy';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { MembersService } from './members.service';
@@ -40,14 +43,14 @@ export class MembersController {
   @ApiOperation({
     summary: 'Criar um novo sócio',
     description:
-      'Cria uma nova ficha de sócio e, opcionalmente, associa-a a um utilizador existente.',
+      'Cria uma nova ficha de sócio no clube do utilizador autenticado e, opcionalmente, associa-a a um utilizador existente do mesmo clube.',
   })
   @ApiCreatedResponse({
     description: 'Sócio criado com sucesso.',
   })
   @ApiBadRequestResponse({
     description:
-      'Os dados enviados são inválidos, o clube não existe ou o utilizador não pertence ao mesmo clube.',
+      'Os dados enviados são inválidos ou o utilizador associado não pertence ao mesmo clube.',
   })
   @ApiConflictResponse({
     description:
@@ -56,16 +59,22 @@ export class MembersController {
   @ApiUnauthorizedResponse({
     description: 'Autenticação necessária.',
   })
-  create(@Body() createMemberDto: CreateMemberDto) {
-    return this.membersService.create(createMemberDto);
+  create(
+    @CurrentUser() currentUser: AuthenticatedUser,
+    @Body() createMemberDto: CreateMemberDto,
+  ) {
+    return this.membersService.create(
+      currentUser.clubId,
+      createMemberDto,
+    );
   }
 
   @Get()
   @Roles('ADMIN', 'OWNER')
   @ApiOperation({
-    summary: 'Listar todos os sócios',
+    summary: 'Listar os sócios do clube',
     description:
-      'Devolve todos os sócios registados, ordenados por primeiro nome e apelido.',
+      'Devolve os sócios do clube do utilizador autenticado, ordenados por primeiro nome e apelido.',
   })
   @ApiOkResponse({
     description: 'Lista de sócios obtida com sucesso.',
@@ -73,15 +82,16 @@ export class MembersController {
   @ApiUnauthorizedResponse({
     description: 'Autenticação necessária.',
   })
-  findAll() {
-    return this.membersService.findAll();
+  findAll(@CurrentUser() currentUser: AuthenticatedUser) {
+    return this.membersService.findAll(currentUser.clubId);
   }
 
   @Get(':id')
   @Roles('ADMIN', 'OWNER')
   @ApiOperation({
     summary: 'Consultar um sócio',
-    description: 'Devolve os dados de um sócio através do respetivo UUID.',
+    description:
+      'Devolve um sócio do clube do utilizador autenticado através do respetivo UUID.',
   })
   @ApiParam({
     name: 'id',
@@ -92,13 +102,20 @@ export class MembersController {
     description: 'Sócio encontrado com sucesso.',
   })
   @ApiNotFoundResponse({
-    description: 'Sócio não encontrado.',
+    description:
+      'Sócio não encontrado no clube do utilizador autenticado.',
   })
   @ApiUnauthorizedResponse({
     description: 'Autenticação necessária.',
   })
-  findOne(@Param('id') id: string) {
-    return this.membersService.findOne(id);
+  findOne(
+    @CurrentUser() currentUser: AuthenticatedUser,
+    @Param('id') id: string,
+  ) {
+    return this.membersService.findOne(
+      id,
+      currentUser.clubId,
+    );
   }
 
   @Patch(':id')
@@ -106,7 +123,7 @@ export class MembersController {
   @ApiOperation({
     summary: 'Atualizar um sócio',
     description:
-      'Atualiza parcialmente os dados de um sócio existente.',
+      'Atualiza parcialmente os dados de um sócio pertencente ao clube do utilizador autenticado.',
   })
   @ApiParam({
     name: 'id',
@@ -118,10 +135,11 @@ export class MembersController {
   })
   @ApiBadRequestResponse({
     description:
-      'Os dados enviados são inválidos, o clube não existe ou o utilizador não pertence ao mesmo clube.',
+      'Os dados enviados são inválidos ou o utilizador associado não pertence ao mesmo clube.',
   })
   @ApiNotFoundResponse({
-    description: 'Sócio não encontrado.',
+    description:
+      'Sócio não encontrado no clube do utilizador autenticado.',
   })
   @ApiConflictResponse({
     description:
@@ -131,10 +149,15 @@ export class MembersController {
     description: 'Autenticação necessária.',
   })
   update(
+    @CurrentUser() currentUser: AuthenticatedUser,
     @Param('id') id: string,
     @Body() updateMemberDto: UpdateMemberDto,
   ) {
-    return this.membersService.update(id, updateMemberDto);
+    return this.membersService.update(
+      id,
+      currentUser.clubId,
+      updateMemberDto,
+    );
   }
 
   @Delete(':id')
@@ -142,7 +165,7 @@ export class MembersController {
   @ApiOperation({
     summary: 'Eliminar um sócio',
     description:
-      'Remove permanentemente a ficha de um sócio da base de dados.',
+      'Remove permanentemente um sócio pertencente ao clube do utilizador autenticado.',
   })
   @ApiParam({
     name: 'id',
@@ -153,12 +176,19 @@ export class MembersController {
     description: 'Sócio eliminado com sucesso.',
   })
   @ApiNotFoundResponse({
-    description: 'Sócio não encontrado.',
+    description:
+      'Sócio não encontrado no clube do utilizador autenticado.',
   })
   @ApiUnauthorizedResponse({
     description: 'Autenticação necessária.',
   })
-  remove(@Param('id') id: string) {
-    return this.membersService.remove(id);
+  remove(
+    @CurrentUser() currentUser: AuthenticatedUser,
+    @Param('id') id: string,
+  ) {
+    return this.membersService.remove(
+      id,
+      currentUser.clubId,
+    );
   }
 }

@@ -15,17 +15,10 @@ import {
 } from 'class-validator';
 
 export class CreateMemberDto {
-  @ApiProperty({
-    example: '7b84a4d5-8c41-4c89-a774-52a2f55a79b2',
-    description: 'Identificador do clube ao qual o sócio pertence.',
-  })
-  @IsUUID()
-  clubId: string;
-
   @ApiPropertyOptional({
     example: '8e2db4ab-07a8-4e4f-98eb-d4dd0c55a5d2',
     description:
-      'Utilizador associado ao sócio (opcional).',
+      'Utilizador associado ao sócio (opcional). Tem de pertencer ao mesmo clube.',
   })
   @IsOptional()
   @IsUUID()
@@ -33,8 +26,7 @@ export class CreateMemberDto {
 
   @ApiProperty({
     example: 'SOC-000001',
-    description:
-      'Número de sócio único dentro do clube.',
+    description: 'Número único de identificação do sócio.',
     maxLength: 30,
   })
   @IsString()
@@ -92,9 +84,8 @@ export class CreateMemberDto {
   birthDate?: string;
 
   @ApiPropertyOptional({
-    example: '2026-07-19',
-    description:
-      'Data de inscrição no clube.',
+    example: '2026-07-23',
+    description: 'Data de inscrição no clube.',
     type: String,
     format: 'date',
   })
@@ -105,7 +96,7 @@ export class CreateMemberDto {
   @ApiPropertyOptional({
     example:
       'Sócio federado. Prefere jogar ao final do dia.',
-    description: 'Observações internas.',
+    description: 'Observações internas sobre o sócio.',
   })
   @IsOptional()
   @IsString()
@@ -113,8 +104,7 @@ export class CreateMemberDto {
 
   @ApiPropertyOptional({
     example: true,
-    description:
-      'Indica se o sócio está ativo.',
+    description: 'Indica se o sócio está ativo.',
     default: true,
   })
   @IsOptional()

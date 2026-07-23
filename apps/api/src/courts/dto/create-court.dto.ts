@@ -10,9 +10,9 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  IsUUID,
   MaxLength,
 } from 'class-validator';
+
 import {
   CourtEnvironment,
   CourtSurfaceType,
@@ -21,20 +21,17 @@ import {
 
 export class CreateCourtDto {
   @ApiProperty({
-    example: '14141ecf-b096-4381-80f9-dbecb89a6d0a',
-    description: 'Identificador UUID do clube ao qual o campo pertence.',
-  })
-  @IsUUID()
-  clubId: string;
-
-  @ApiProperty({
     example: 'Campo 1',
     description: 'Nome identificativo do campo.',
     maxLength: 100,
   })
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
+  @IsNotEmpty({
+    message: 'O nome do campo é obrigatório.',
+  })
+  @MaxLength(100, {
+    message: 'O nome do campo não pode exceder 100 caracteres.',
+  })
   name: string;
 
   @ApiPropertyOptional({
@@ -47,12 +44,15 @@ export class CreateCourtDto {
 
   @ApiPropertyOptional({
     example: 'Pavilhão principal',
-    description: 'Localização do campo dentro das instalações do clube.',
+    description:
+      'Localização do campo dentro das instalações do clube.',
     maxLength: 150,
   })
   @IsOptional()
   @IsString()
-  @MaxLength(150)
+  @MaxLength(150, {
+    message: 'A localização não pode exceder 150 caracteres.',
+  })
   location?: string;
 
   @ApiPropertyOptional({
@@ -70,7 +70,8 @@ export class CreateCourtDto {
   @ApiPropertyOptional({
     enum: CourtType,
     example: CourtType.DOUBLES,
-    description: 'Tipo de campo, destinado a jogos singulares ou de pares.',
+    description:
+      'Tipo de campo, destinado a jogos singulares ou de pares.',
     default: CourtType.DOUBLES,
   })
   @IsOptional()
@@ -113,7 +114,8 @@ export class CreateCourtDto {
 
   @ApiPropertyOptional({
     example: true,
-    description: 'Indica se o campo está ativo e disponível para utilização.',
+    description:
+      'Indica se o campo está ativo e disponível para utilização.',
     default: true,
   })
   @IsOptional()

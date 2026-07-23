@@ -1,13 +1,20 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertCircle, Plus, RefreshCw } from 'lucide-react';
+import {
+  AlertCircle,
+  Download,
+  Plus,
+  RefreshCw,
+} from 'lucide-react';
 
 import { DataTable } from '@/components/common/DataTable';
 import { PageHeader } from '@/components/common/PageHeader';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DeleteMemberDialog } from '@/features/members/components/DeleteMemberDialog';
+import { MemberDialog } from '@/features/members/components/MemberDialog';
 import { getMemberColumns } from '@/features/members/components/memberColumns';
 import { api } from '@/lib/api';
 import type { Member } from '@/types/member';
@@ -17,11 +24,58 @@ interface ApiResponse<T> {
   data: T;
 }
 
+type MemberDialogMode = 'create' | 'edit';
+
+/**
+ * Protege o conteúdo CSV contra separadores, aspas,
+ * quebras de linha e fórmulas interpretadas pelo Excel.
+ */
+function escapeCsvValue(
+  value: string | number | boolean | null | undefined,
+): string {
+  if (value === null || value === undefined) {
+    return '';
+  }
+
+  let normalizedValue = String(value);
+
+  // Impede que o Excel interprete o conteúdo como uma fórmula.
+  if (/^[=+\-@]/.test(normalizedValue)) {
+    normalizedValue = `'${normalizedValue}`;
+  }
+
+  const escapedValue = normalizedValue.replace(/"/g, '""');
+
+  return `"${escapedValue}"`;
+}
+
+function formatCsvDate(
+  value: string | null | undefined,
+): string {
+  if (!value) {
+    return '';
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('pt-PT').format(date);
+}
 export default function MembersPage() {
   const [members, setMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [memberDialogOpen, setMemberDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [memberDialogMode, setMemberDialogMode] =
+    useState<MemberDialogMode>('create');
+  const [selectedMember, setSelectedMember] =
+    useState<Member | null>(null);
 
   const fetchMembers = useCallback(async (showRefreshState = false) => {
     try {
@@ -54,16 +108,107 @@ export default function MembersPage() {
   }, [fetchMembers]);
 
   function handleCreateMember() {
-    console.log('Criar novo sócio');
+    setSelectedMember(null);
+    setMemberDialogMode('create');
+    setMemberDialogOpen(true);
   }
 
   function handleEditMember(member: Member) {
-    console.log('Editar sócio:', member);
+    setSelectedMember(member);
+    setMemberDialogMode('edit');
+    setMemberDialogOpen(true);
   }
 
   function handleDeleteMember(member: Member) {
-    console.log('Eliminar sócio:', member);
+    setSelectedMember(member);
+    setDeleteDialogOpen(true);
   }
+
+  function handleMemberDialogOpenChange(open: boolean) {
+    setMemberDialogOpen(open);
+
+    if (!open) {
+      setSelectedMember(null);
+      setMemberDialogMode('create');
+    }
+  }
+
+  function handleDeleteDialogOpenChange(open: boolean) {
+    setDeleteDialogOpen(open);
+
+    if (!open) {
+      setSelectedMember(null);
+    }
+  }
+
+  async function handleMemberSaved() {
+    await fetchMembers(true);
+  }
+
+  async function handleMemberDeleted() {
+    await fetchMembers(true);
+  }
+
+  function handleExportCsv() {
+  if (members.length === 0) {
+    return;
+  }
+
+  const headers = [
+    'Número de sócio',
+    'Primeiro nome',
+    'Apelido',
+    'Email',
+    'Telefone',
+    'Data de nascimento',
+    'Data de inscrição',
+    'Estado',
+    'Observações',
+  ];
+
+  const rows = members.map((member) => [
+    member.membershipNumber,
+    member.firstName,
+    member.lastName,
+    member.email ?? '',
+    member.phone ?? '',
+    formatCsvDate(member.birthDate),
+    formatCsvDate(member.joinDate),
+    member.isActive ? 'Ativo' : 'Inativo',
+    member.notes ?? '',
+  ]);
+
+  const csvContent = [
+    headers.map(escapeCsvValue).join(';'),
+    ...rows.map((row) =>
+      row.map(escapeCsvValue).join(';'),
+    ),
+  ].join('\r\n');
+
+  // O BOM UTF-8 garante a correta apresentação de acentos no Excel.
+  const csvBlob = new Blob(
+    ['\uFEFF', csvContent],
+    {
+      type: 'text/csv;charset=utf-8;',
+    },
+  );
+
+  const downloadUrl = URL.createObjectURL(csvBlob);
+  const downloadLink = document.createElement('a');
+
+  const currentDate = new Date()
+    .toISOString()
+    .slice(0, 10);
+
+  downloadLink.href = downloadUrl;
+  downloadLink.download = `socios-${currentDate}.csv`;
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+
+  URL.revokeObjectURL(downloadUrl);
+}
 
   const columns = useMemo(
     () =>
@@ -113,25 +258,36 @@ export default function MembersPage() {
         <MembersTableSkeleton />
       ) : (
         <>
-          <div className="flex justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => void fetchMembers(true)}
-              disabled={isRefreshing}
-            >
-              <RefreshCw
-                className={
-                  isRefreshing
-                    ? 'size-4 animate-spin'
-                    : 'size-4'
-                }
-              />
+<div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+  <Button
+    type="button"
+    variant="outline"
+    size="sm"
+    onClick={handleExportCsv}
+    disabled={members.length === 0}
+  >
+    <Download className="size-4" />
+    Exportar CSV
+  </Button>
 
-              {isRefreshing ? 'A atualizar...' : 'Atualizar'}
-            </Button>
-          </div>
+  <Button
+    type="button"
+    variant="outline"
+    size="sm"
+    onClick={() => void fetchMembers(true)}
+    disabled={isRefreshing}
+  >
+    <RefreshCw
+      className={
+        isRefreshing
+          ? 'size-4 animate-spin'
+          : 'size-4'
+      }
+    />
+
+    {isRefreshing ? 'A atualizar...' : 'Atualizar'}
+  </Button>
+</div>
 
           <DataTable
             columns={columns}
@@ -152,6 +308,21 @@ export default function MembersPage() {
           />
         </>
       )}
+
+      <MemberDialog
+        open={memberDialogOpen}
+        mode={memberDialogMode}
+        member={selectedMember}
+        onOpenChange={handleMemberDialogOpenChange}
+        onSuccess={handleMemberSaved}
+      />
+
+      <DeleteMemberDialog
+        open={deleteDialogOpen}
+        member={selectedMember}
+        onOpenChange={handleDeleteDialogOpenChange}
+        onSuccess={handleMemberDeleted}
+      />
     </div>
   );
 }

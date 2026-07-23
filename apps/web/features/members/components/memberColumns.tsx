@@ -1,9 +1,13 @@
 'use client';
 
 import type { ColumnDef } from '@tanstack/react-table';
-import { Mail, Pencil, Phone, Trash2, UserRound } from 'lucide-react';
+import { Mail, Pencil, Phone, Trash2 } from 'lucide-react';
 
 import { StatusBadge } from '@/components/common/StatusBadge';
+import {
+  Avatar,
+  AvatarFallback,
+} from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -39,6 +43,23 @@ function formatPhoneNumber(phone: string | null): string {
   return phone;
 }
 
+/**
+ * Obtém as iniciais do primeiro nome e do apelido.
+ *
+ * Exemplos:
+ * António Almeida -> AA
+ * Marco Oliveira -> MO
+ */
+function getMemberInitials(
+  firstName: string,
+  lastName: string,
+): string {
+  const firstInitial = firstName.trim().charAt(0);
+  const lastInitial = lastName.trim().charAt(0);
+
+  return `${firstInitial}${lastInitial}`.toUpperCase();
+}
+
 export function getMemberColumns({
   onEdit,
   onDelete,
@@ -56,35 +77,49 @@ export function getMemberColumns({
     {
       id: 'member',
       accessorFn: (member) =>
-        `${member.firstName} ${member.lastName} ${member.email}`,
+        `${member.firstName} ${member.lastName} ${member.email ?? ''}`,
       header: 'Sócio',
       cell: ({ row }) => {
         const member = row.original;
+
         const fullName =
           `${member.firstName} ${member.lastName}`.trim();
 
+        const initials = getMemberInitials(
+          member.firstName,
+          member.lastName,
+        );
+
         return (
           <div className="min-w-64">
-            <div className="flex items-center gap-2">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                <UserRound className="size-4 text-muted-foreground" />
-              </div>
+            <div className="flex items-center gap-3">
+              <Avatar className="size-9">
+                <AvatarFallback className="text-xs font-semibold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
 
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
                   {fullName}
                 </p>
 
-                <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Mail className="size-3.5 shrink-0" />
+                {member.email ? (
+                  <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Mail className="size-3.5 shrink-0" />
 
-                  <a
-                    href={`mailto:${member.email}`}
-                    className="truncate transition-colors hover:text-foreground hover:underline"
-                  >
-                    {member.email}
-                  </a>
-                </div>
+                    <a
+                      href={`mailto:${member.email}`}
+                      className="truncate transition-colors hover:text-foreground hover:underline"
+                    >
+                      {member.email}
+                    </a>
+                  </div>
+                ) : (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Sem email
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -132,6 +167,7 @@ export function getMemberColumns({
       header: 'Ações',
       cell: ({ row }) => {
         const member = row.original;
+
         const fullName =
           `${member.firstName} ${member.lastName}`.trim();
 

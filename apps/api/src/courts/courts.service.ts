@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourtDto } from './dto/create-court.dto';
@@ -12,6 +13,9 @@ import { UpdateCourtDto } from './dto/update-court.dto';
 export class CourtsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Relações devolvidas juntamente com os dados do campo.
+   */
   private readonly courtInclude = {
     club: {
       select: {
@@ -22,8 +26,14 @@ export class CourtsService {
     },
   } satisfies Prisma.CourtInclude;
 
-  async findAll() {
+  /**
+   * Devolve todos os campos pertencentes ao clube autenticado.
+   */
+  async findAll(clubId: string) {
     return this.prisma.court.findMany({
+      where: {
+        clubId,
+      },
       include: this.courtInclude,
       orderBy: {
         name: 'asc',
@@ -31,9 +41,18 @@ export class CourtsService {
     });
   }
 
-  async findOne(id: string) {
-    const court = await this.prisma.court.findUnique({
-      where: { id },
+  /**
+   * Devolve um campo do clube autenticado através do seu UUID.
+   *
+   * A utilização simultânea do id e do clubId impede que um
+   * utilizador consulte campos pertencentes a outro clube.
+   */
+  async findOne(id: string, clubId: string) {
+    const court = await this.prisma.court.findFirst({
+      where: {
+        id,
+        clubId,
+      },
       include: this.courtInclude,
     });
 
@@ -44,19 +63,30 @@ export class CourtsService {
     return court;
   }
 
-  async create(createCourtDto: CreateCourtDto) {
-    await this.validateClubExists(createCourtDto.clubId);
+  /**
+   * Cria um novo campo no clube do utilizador autenticado.
+   */
+  async create(
+    clubId: string,
+    createCourtDto: CreateCourtDto,
+  ) {
+    const normalizedName = createCourtDto.name.trim();
+
     await this.validateCourtNameIsUnique(
-      createCourtDto.clubId,
-      createCourtDto.name,
+      clubId,
+      normalizedName,
     );
 
     return this.prisma.court.create({
       data: {
-        clubId: createCourtDto.clubId,
-        name: createCourtDto.name.trim(),
-        description: createCourtDto.description?.trim(),
-        location: createCourtDto.location?.trim(),
+        clubId,
+        name: normalizedName,
+        description: this.normalizeOptionalText(
+          createCourtDto.description,
+        ),
+        location: this.normalizeOptionalText(
+          createCourtDto.location,
+        ),
         surfaceType: createCourtDto.surfaceType,
         courtType: createCourtDto.courtType,
         environment: createCourtDto.environment,
@@ -67,40 +97,53 @@ export class CourtsService {
     });
   }
 
-  async update(id: string, updateCourtDto: UpdateCourtDto) {
-    const existingCourt = await this.findOne(id);
+  /**
+   * Atualiza um campo pertencente ao clube autenticado.
+   */
+  async update(
+    id: string,
+    clubId: string,
+    updateCourtDto: UpdateCourtDto,
+  ) {
+    const existingCourt = await this.findOne(id, clubId);
 
-    const targetClubId = updateCourtDto.clubId ?? existingCourt.clubId;
-    const targetName = updateCourtDto.name?.trim() ?? existingCourt.name;
+    const normalizedName =
+      updateCourtDto.name !== undefined
+        ? updateCourtDto.name.trim()
+        : existingCourt.name;
 
-    if (updateCourtDto.clubId) {
-      await this.validateClubExists(updateCourtDto.clubId);
-    }
-
-    if (
-      targetClubId !== existingCourt.clubId ||
-      targetName !== existingCourt.name
-    ) {
+    if (normalizedName !== existingCourt.name) {
       await this.validateCourtNameIsUnique(
-        targetClubId,
-        targetName,
+        clubId,
+        normalizedName,
         existingCourt.id,
       );
     }
 
     return this.prisma.court.update({
-      where: { id },
+      where: {
+        id: existingCourt.id,
+      },
       data: {
-        clubId: updateCourtDto.clubId,
-        name: updateCourtDto.name?.trim(),
+        name:
+          updateCourtDto.name !== undefined
+            ? normalizedName
+            : undefined,
+
         description:
           updateCourtDto.description !== undefined
-            ? updateCourtDto.description?.trim()
+            ? this.normalizeOptionalText(
+                updateCourtDto.description,
+              )
             : undefined,
+
         location:
           updateCourtDto.location !== undefined
-            ? updateCourtDto.location?.trim()
+            ? this.normalizeOptionalText(
+                updateCourtDto.location,
+              )
             : undefined,
+
         surfaceType: updateCourtDto.surfaceType,
         courtType: updateCourtDto.courtType,
         environment: updateCourtDto.environment,
@@ -111,31 +154,31 @@ export class CourtsService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  /**
+   * Elimina permanentemente um campo pertencente ao clube autenticado.
+   */
+  async remove(
+    id: string,
+    clubId: string,
+  ): Promise<void> {
+    const existingCourt = await this.findOne(id, clubId);
 
-    return this.prisma.court.delete({
-      where: { id },
-      include: this.courtInclude,
+    await this.prisma.court.delete({
+      where: {
+        id: existingCourt.id,
+      },
     });
   }
 
-  private async validateClubExists(clubId: string) {
-    const club = await this.prisma.club.findUnique({
-      where: { id: clubId },
-      select: { id: true },
-    });
-
-    if (!club) {
-      throw new NotFoundException('Clube não encontrado.');
-    }
-  }
-
+  /**
+   * Confirma que ainda não existe outro campo com o mesmo nome
+   * dentro do clube.
+   */
   private async validateCourtNameIsUnique(
     clubId: string,
     name: string,
     ignoredCourtId?: string,
-  ) {
+  ): Promise<void> {
     const existingCourt = await this.prisma.court.findFirst({
       where: {
         clubId,
@@ -156,8 +199,28 @@ export class CourtsService {
 
     if (existingCourt) {
       throw new ConflictException(
-        'Já existe um campo com este nome no clube indicado.',
+        'Já existe um campo com este nome no clube.',
       );
     }
+  }
+
+  /**
+   * Remove espaços do início e fim de um texto opcional.
+   *
+   * Uma string composta apenas por espaços é guardada como null,
+   * em vez de permanecer como uma string vazia.
+   */
+  private normalizeOptionalText(
+    value: string | undefined,
+  ): string | null | undefined {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    const normalizedValue = value.trim();
+
+    return normalizedValue.length > 0
+      ? normalizedValue
+      : null;
   }
 }

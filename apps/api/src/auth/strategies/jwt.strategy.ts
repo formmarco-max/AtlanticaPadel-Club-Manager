@@ -7,12 +7,14 @@ type JwtPayload = {
   sub: string;
   email: string;
   role: string;
+  clubId: string;
 };
 
 export type AuthenticatedUser = {
   id: string;
   email: string;
   role: string;
+  clubId: string;
 };
 
 @Injectable()
@@ -34,14 +36,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: JwtPayload): AuthenticatedUser {
-    if (!payload.sub || !payload.email || !payload.role) {
-      throw new UnauthorizedException('Token de autenticação inválido.');
+    if (
+      !payload.sub ||
+      !payload.email ||
+      !payload.role ||
+      !payload.clubId
+    ) {
+      throw new UnauthorizedException(
+        'Token de autenticação inválido.',
+      );
     }
 
     return {
       id: payload.sub,
       email: payload.email,
       role: payload.role,
+      clubId: payload.clubId,
     };
   }
 }

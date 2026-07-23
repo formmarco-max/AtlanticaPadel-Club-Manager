@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  GraduationCap,
   LoaderCircle,
   LockKeyhole,
   Mail,
@@ -87,8 +88,6 @@ function RecoveryModal({
 
     setIsSubmitting(true);
 
-    // Fluxo demonstrativo. Numa implementação completa, esta ação
-    // deverá chamar o endpoint de recuperação de palavra-passe.
     await new Promise((resolve) => {
       window.setTimeout(resolve, 700);
     });
@@ -103,7 +102,7 @@ function RecoveryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 px-4 py-8 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/65 px-4 py-8 backdrop-blur-sm"
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
@@ -116,7 +115,7 @@ function RecoveryModal({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="relative w-full max-w-md overflow-hidden rounded-3xl border bg-background shadow-2xl"
+        className="relative w-full max-w-md overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_28px_80px_-24px_rgba(15,23,42,0.45)] dark:border-slate-800 dark:bg-slate-950"
       >
         <button
           type="button"
@@ -127,8 +126,8 @@ function RecoveryModal({
           <X className="size-4" />
         </button>
 
-        <div className="border-b bg-gradient-to-br from-primary/12 via-primary/[0.04] to-background px-6 py-7">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <div className="border-b bg-gradient-to-br from-cyan-500/10 via-primary/[0.04] to-background px-6 py-7">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-300">
             {step === 'form' ? (
               <LockKeyhole className="size-6" />
             ) : (
@@ -172,7 +171,7 @@ function RecoveryModal({
                   type="email"
                   autoComplete="email"
                   placeholder="utilizador@exemplo.pt"
-                  className="h-11 pl-10"
+                  className="h-12 rounded-xl pl-10"
                   value={recoveryEmail}
                   onChange={(event) =>
                     setRecoveryEmail(event.target.value)
@@ -298,9 +297,6 @@ export default function LoginPage() {
         password,
       });
 
-      // A persistência efetiva da sessão deverá ser tratada pelo
-      // hook/useAuth ou pelo mecanismo de cookies/tokens do backend.
-      // O estado é mantido para documentar a intenção funcional.
       void rememberSession;
 
       router.replace('/dashboard');
@@ -329,9 +325,9 @@ export default function LoginPage() {
 
   if (isSessionLoading || isAuthenticated) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background">
+      <main className="flex min-h-screen items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <div className="flex size-14 items-center justify-center rounded-2xl bg-cyan-500/10 text-cyan-600">
             <LoaderCircle
               className="size-7 animate-spin"
               aria-label="A carregar"
@@ -348,114 +344,113 @@ export default function LoginPage() {
 
   return (
     <>
-      <main className="min-h-screen bg-background lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(480px,0.95fr)]">
-        <section className="relative hidden min-h-screen overflow-hidden border-r bg-slate-950 text-white lg:flex lg:flex-col lg:justify-between">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.28),transparent_42%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.20),transparent_40%)]" />
-          <div className="absolute -left-24 top-1/3 size-80 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute -right-20 bottom-20 size-72 rounded-full bg-emerald-500/10 blur-3xl" />
+      <main className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[minmax(0,1.12fr)_minmax(500px,0.88fr)]">
+        <section className="relative hidden min-h-screen overflow-hidden border-r border-white/10 text-white lg:flex lg:flex-col lg:justify-between">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url('/images/padel-login.jpg')",
+            }}
+          />
+          <div className="absolute inset-0 bg-slate-950/68" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.92)_0%,rgba(2,6,23,0.68)_48%,rgba(2,6,23,0.38)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(34,211,238,0.18),transparent_34%),radial-gradient(circle_at_85%_75%,rgba(16,185,129,0.12),transparent_38%)]" />
+          <div className="absolute left-0 top-[18%] h-[48%] w-[78%] bg-gradient-to-r from-slate-950/65 via-slate-950/30 to-transparent blur-2xl" />
 
-          <div className="relative z-10 p-10 xl:p-14">
+          <div className="relative z-10 flex min-h-[calc(100vh-96px)] flex-col px-10 py-10 xl:px-14 xl:py-12">
             <div className="flex items-center gap-4">
-              <div className="flex size-14 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-lg font-bold tracking-tight shadow-xl backdrop-blur">
-                APCM
-              </div>
+              <span className="h-0.5 w-7 rounded-full bg-cyan-400" />
 
-              <div>
-                <p className="text-sm font-semibold tracking-wide text-white">
-                  Atlantica Padel Club
-                </p>
-                <p className="text-xs text-slate-400">
-                  Management Platform
-                </p>
-              </div>
+              <p className="text-[15px] font-extrabold uppercase tracking-[0.12em] text-white">
+                Atlantica Padel Club Manager
+              </p>
             </div>
 
-            <div className="mt-20 max-w-2xl xl:mt-24">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-slate-300 backdrop-blur">
-                <Sparkles className="size-3.5 text-sky-300" />
+            <div className="my-auto max-w-3xl py-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-slate-950/35 px-3 py-1.5 text-xs font-medium text-cyan-200 shadow-lg backdrop-blur-md">
+                <Sparkles className="size-3.5" />
                 Gestão centralizada e eficiente
               </div>
 
-              <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight xl:text-5xl">
+              <h1 className="mt-7 max-w-2xl text-4xl font-bold leading-[1.08] tracking-tight text-white xl:text-5xl 2xl:text-6xl">
                 Gere o clube com uma visão clara de toda a operação.
               </h1>
 
-              <p className="mt-5 max-w-xl text-base leading-7 text-slate-300">
-                Uma plataforma académica desenvolvida para apoiar a
-                gestão de sócios, reservas, campos, treinadores,
-                pagamentos e indicadores operacionais.
+              <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 xl:text-lg">
+                Uma plataforma moderna para centralizar a gestão de
+                clubes de padel, reunindo sócios, reservas, campos,
+                torneios, pagamentos e indicadores operacionais numa
+                única aplicação.
               </p>
-            </div>
 
-            <div className="mt-14 grid max-w-2xl gap-4 xl:grid-cols-3">
-              {productFeatures.map(
-                ({ icon: Icon, title, description }) => (
-                  <div
-                    key={title}
-                    className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur"
-                  >
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-white/10 text-sky-300">
-                      <Icon className="size-5" />
+              <div className="mt-12 grid max-w-3xl gap-4 xl:grid-cols-3">
+                {productFeatures.map(
+                  ({ icon: Icon, title, description }) => (
+                    <div
+                      key={title}
+                      className="rounded-3xl border border-white/15 bg-slate-950/35 p-5 shadow-[0_18px_45px_-18px_rgba(0,0,0,0.75)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/40 hover:bg-slate-950/45 hover:shadow-[0_24px_60px_-22px_rgba(34,211,238,0.35)]"
+                    >
+                      <div className="flex size-11 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-cyan-300">
+                        <Icon className="size-5" />
+                      </div>
+
+                      <h2 className="mt-5 text-sm font-semibold text-white xl:text-base">
+                        {title}
+                      </h2>
+
+                      <p className="mt-2 text-xs leading-relaxed text-slate-300 xl:text-sm">
+                        {description}
+                      </p>
                     </div>
-
-                    <h2 className="mt-4 text-sm font-semibold">
-                      {title}
-                    </h2>
-
-                    <p className="mt-2 text-xs leading-relaxed text-slate-400">
-                      {description}
-                    </p>
-                  </div>
-                ),
-              )}
+                  ),
+                )}
+              </div>
             </div>
           </div>
 
-          <footer className="relative z-10 flex items-end justify-between gap-8 border-t border-white/10 px-10 py-7 text-xs text-slate-400 xl:px-14">
-            <div>
-              <p className="font-medium text-slate-300">
-                Projeto Final de Licenciatura
-              </p>
-              <p className="mt-1">
-                Universidade Atlântica · 2026
-              </p>
+          <footer className="relative z-10 flex items-end justify-between gap-8 border-t border-white/10 px-10 py-7 text-xs text-slate-300 backdrop-blur-sm xl:px-14">
+            <div className="flex items-start gap-3">
+              <GraduationCap className="mt-0.5 size-5 text-cyan-300" />
+
+              <div>
+                <p className="font-medium text-white">
+                  Projeto Final de Licenciatura
+                </p>
+                <p className="mt-1">
+                  Universidade Atlântica · 2026
+                </p>
+              </div>
             </div>
 
             <p>Versão 1.0.0</p>
           </footer>
         </section>
 
-        <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-8 lg:px-12">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--primary)/0.10),transparent_36%),radial-gradient(circle_at_bottom_left,hsl(var(--primary)/0.06),transparent_35%)]" />
+        <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-8 lg:px-12 xl:px-16">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.08),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.06),transparent_34%)]" />
 
-          <div className="relative z-10 w-full max-w-md">
+          <div className="relative z-10 w-full max-w-[31rem]">
             <div className="mb-10 flex items-center gap-3 lg:hidden">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-lg">
-                APCM
-              </div>
+              <span className="h-0.5 w-7 rounded-full bg-cyan-500" />
 
-              <div>
-                <p className="font-semibold">
-                  Atlantica Padel Club
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Management Platform
-                </p>
-              </div>
+              <p className="font-extrabold uppercase tracking-[0.08em]">
+                Atlantica Padel Club Manager
+              </p>
             </div>
 
-            <div className="rounded-3xl border bg-background/95 p-6 shadow-2xl shadow-slate-950/5 backdrop-blur sm:p-8">
+            <div className="rounded-[2rem] border border-slate-200/90 bg-white/95 p-7 shadow-[0_28px_80px_-30px_rgba(15,23,42,0.42)] backdrop-blur-xl sm:p-9">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
-                  <ShieldCheck className="size-3.5 text-primary" />
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200/80 bg-cyan-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <ShieldCheck className="size-3.5 text-cyan-600" />
                   Área reservada
                 </div>
 
-                <h2 className="mt-5 text-3xl font-bold tracking-tight">
+                <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-950 sm:text-[2rem]">
                   Bem-vindo de volta
                 </h2>
 
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">
                   Introduz as tuas credenciais para aceder à
                   plataforma de gestão.
                 </p>
@@ -466,10 +461,12 @@ export default function LoginPage() {
                 onSubmit={handleSubmit}
               >
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-slate-800">
+                    Email
+                  </Label>
 
                   <div className="relative">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Mail className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
 
                     <Input
                       id="email"
@@ -477,11 +474,14 @@ export default function LoginPage() {
                       type="email"
                       placeholder="utilizador@exemplo.pt"
                       autoComplete="email"
-                      className="h-11 pl-10"
+                      className="h-12 rounded-xl border-slate-200 bg-white pl-10 shadow-sm transition focus-visible:ring-cyan-500"
                       value={email}
-                      onChange={(event) =>
-                        setEmail(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setEmail(event.target.value);
+                        if (errorMessage) {
+                          setErrorMessage('');
+                        }
+                      }}
                       disabled={isSubmitting}
                       required
                       autoFocus
@@ -491,13 +491,16 @@ export default function LoginPage() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-4">
-                    <Label htmlFor="password">
+                    <Label
+                      htmlFor="password"
+                      className="text-slate-800"
+                    >
                       Palavra-passe
                     </Label>
 
                     <button
                       type="button"
-                      className="text-xs font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
+                      className="text-xs font-medium text-slate-600 transition-colors hover:text-cyan-700 hover:underline"
                       onClick={() => setIsRecoveryOpen(true)}
                     >
                       Esqueceu-se da palavra-passe?
@@ -505,7 +508,7 @@ export default function LoginPage() {
                   </div>
 
                   <div className="relative">
-                    <LockKeyhole className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <LockKeyhole className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
 
                     <Input
                       id="password"
@@ -513,11 +516,14 @@ export default function LoginPage() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Introduz a palavra-passe"
                       autoComplete="current-password"
-                      className="h-11 px-10"
+                      className="h-12 rounded-xl border-slate-200 bg-white px-10 shadow-sm transition focus-visible:ring-cyan-500"
                       value={password}
-                      onChange={(event) =>
-                        setPassword(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                        if (errorMessage) {
+                          setErrorMessage('');
+                        }
+                      }}
                       disabled={isSubmitting}
                       required
                     />
@@ -530,7 +536,7 @@ export default function LoginPage() {
                           : 'Mostrar palavra-passe'
                       }
                       aria-pressed={showPassword}
-                      className="absolute right-3 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                       onClick={() =>
                         setShowPassword((current) => !current)
                       }
@@ -549,7 +555,7 @@ export default function LoginPage() {
                   <span className="relative flex size-5 shrink-0 items-center justify-center">
                     <input
                       type="checkbox"
-                      className="peer size-5 appearance-none rounded-md border border-input bg-background transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="peer size-5 appearance-none rounded-md border border-slate-300 bg-white transition-colors checked:border-slate-950 checked:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       checked={rememberSession}
                       onChange={(event) =>
                         setRememberSession(event.target.checked)
@@ -557,10 +563,10 @@ export default function LoginPage() {
                       disabled={isSubmitting}
                     />
 
-                    <Check className="pointer-events-none absolute size-3.5 text-primary-foreground opacity-0 peer-checked:opacity-100" />
+                    <Check className="pointer-events-none absolute size-3.5 text-white opacity-0 peer-checked:opacity-100" />
                   </span>
 
-                  <span className="text-muted-foreground">
+                  <span className="text-slate-600">
                     Manter sessão iniciada
                   </span>
                 </label>
@@ -580,13 +586,13 @@ export default function LoginPage() {
 
                 <Button
                   type="submit"
-                  className="h-11 w-full"
+                  className="h-12 w-full rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:brightness-110 hover:shadow-xl disabled:hover:translate-y-0 disabled:hover:brightness-100"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
                     <LoaderCircle className="size-4 animate-spin" />
                   ) : (
-                    <ArrowRight className="size-4" />
+                    <ArrowRight className="size-4 text-cyan-300" />
                   )}
 
                   {isSubmitting
@@ -595,11 +601,11 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              <div className="mt-7 border-t pt-6">
-                <div className="flex items-start gap-3 rounded-2xl bg-muted/40 px-4 py-3">
-                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+              <div className="mt-8 border-t border-slate-200 pt-6">
+                <div className="flex items-start gap-3 rounded-2xl border border-cyan-100 bg-gradient-to-r from-cyan-50 to-emerald-50/70 px-4 py-4">
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-slate-700" />
 
-                  <p className="text-xs leading-relaxed text-muted-foreground">
+                  <p className="text-xs leading-relaxed text-slate-600">
                     O acesso é reservado a utilizadores autorizados.
                     As tentativas de autenticação podem ser registadas
                     para fins de segurança e auditoria.
