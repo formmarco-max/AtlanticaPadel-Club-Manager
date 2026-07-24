@@ -175,17 +175,19 @@ export function getMemberColumns({
           <TooltipProvider>
             <div className="flex justify-end gap-1">
               <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onEdit(member)}
-                    aria-label={`Editar ${fullName}`}
-                    className="size-9"
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onEdit(member)}
+                      aria-label={`Editar ${fullName}`}
+                      className="size-9"
+                    />
+                  }
+                >
+                  <Pencil className="size-4" />
                 </TooltipTrigger>
 
                 <TooltipContent>
@@ -194,17 +196,19 @@ export function getMemberColumns({
               </Tooltip>
 
               <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onDelete(member)}
-                    aria-label={`Eliminar ${fullName}`}
-                    className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onDelete(member)}
+                      aria-label={`Eliminar ${fullName}`}
+                      className="size-9 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    />
+                  }
+                >
+                  <Trash2 className="size-4" />
                 </TooltipTrigger>
 
                 <TooltipContent>

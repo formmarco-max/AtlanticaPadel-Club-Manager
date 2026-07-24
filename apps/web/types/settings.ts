@@ -15,6 +15,7 @@ export interface MyProfile {
   id: string;
   clubId: string;
   email: string;
+  phone: string | null;
   firstName: string;
   lastName: string;
   avatarUrl: string | null;
@@ -34,6 +35,8 @@ export interface ClubSettings {
 export interface UpdateMyProfilePayload {
   firstName: string;
   lastName: string;
+  email: string;
+  phone?: string;
 }
 
 export interface UpdateClubPayload {
