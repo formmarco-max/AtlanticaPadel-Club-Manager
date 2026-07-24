@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -17,6 +19,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -38,7 +41,7 @@ export class ReservationsController {
   @ApiOperation({
     summary: 'Criar uma nova reserva',
     description:
-      'Cria uma reserva para um campo e sócio, validando disponibilidade, horário de funcionamento e regras do clube.',
+      'Cria uma reserva para um campo e sócio do clube autenticado, validando disponibilidade, horário de funcionamento e regras do clube.',
   })
   @ApiBody({
     type: CreateReservationDto,
@@ -61,29 +64,35 @@ export class ReservationsController {
     description:
       'Já existe uma reserva para o campo no período indicado.',
   })
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationsService.create(createReservationDto);
+  create(
+    @CurrentUser('clubId') clubId: string,
+    @Body() createReservationDto: CreateReservationDto,
+  ) {
+    return this.reservationsService.create(
+      clubId,
+      createReservationDto,
+    );
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Listar todas as reservas',
+    summary: 'Listar as reservas do clube autenticado',
     description:
-      'Devolve todas as reservas, incluindo os dados resumidos do clube, campo e sócio.',
+      'Devolve as reservas pertencentes ao clube autenticado, incluindo os dados resumidos do clube, campo e sócio.',
   })
   @ApiResponse({
     status: 200,
     description: 'Lista de reservas obtida com sucesso.',
   })
-  findAll() {
-    return this.reservationsService.findAll();
+  findAll(@CurrentUser('clubId') clubId: string) {
+    return this.reservationsService.findAll(clubId);
   }
 
   @Get(':id')
   @ApiOperation({
     summary: 'Obter uma reserva',
     description:
-      'Devolve os dados de uma reserva através do respetivo identificador UUID.',
+      'Devolve uma reserva do clube autenticado através do respetivo identificador UUID.',
   })
   @ApiParam({
     name: 'id',
@@ -104,6 +113,7 @@ export class ReservationsController {
     description: 'Reserva não encontrada.',
   })
   findOne(
+    @CurrentUser('clubId') clubId: string,
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -113,14 +123,14 @@ export class ReservationsController {
     )
     id: string,
   ) {
-    return this.reservationsService.findOne(id);
+    return this.reservationsService.findOne(id, clubId);
   }
 
   @Patch(':id')
   @ApiOperation({
     summary: 'Atualizar uma reserva',
     description:
-      'Atualiza parcialmente uma reserva e volta a validar as regras de disponibilidade quando necessário.',
+      'Atualiza parcialmente uma reserva do clube autenticado e volta a validar as regras de disponibilidade quando necessário.',
   })
   @ApiParam({
     name: 'id',
@@ -150,6 +160,7 @@ export class ReservationsController {
       'Já existe uma reserva para o campo no período indicado.',
   })
   update(
+    @CurrentUser('clubId') clubId: string,
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -162,15 +173,17 @@ export class ReservationsController {
   ) {
     return this.reservationsService.update(
       id,
+      clubId,
       updateReservationDto,
     );
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Eliminar uma reserva',
     description:
-      'Elimina definitivamente uma reserva através do respetivo identificador UUID.',
+      'Elimina definitivamente uma reserva do clube autenticado através do respetivo identificador UUID.',
   })
   @ApiParam({
     name: 'id',
@@ -179,7 +192,7 @@ export class ReservationsController {
     description: 'Identificador UUID da reserva.',
   })
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'Reserva eliminada com sucesso.',
   })
   @ApiResponse({
@@ -190,7 +203,8 @@ export class ReservationsController {
     status: 404,
     description: 'Reserva não encontrada.',
   })
-  remove(
+  async remove(
+    @CurrentUser('clubId') clubId: string,
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -200,6 +214,6 @@ export class ReservationsController {
     )
     id: string,
   ) {
-    return this.reservationsService.remove(id);
+    await this.reservationsService.remove(id, clubId);
   }
 }

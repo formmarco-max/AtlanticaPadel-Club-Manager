@@ -7,9 +7,9 @@ import { LoginDto } from './dto/login.dto';
 
 type JwtPayload = {
   sub: string;
+  clubId: string;
   email: string;
   role: string;
-  clubId: string;
 };
 
 type LoginResponse = {
@@ -18,11 +18,12 @@ type LoginResponse = {
   expiresIn: number;
   user: {
     id: string;
+    clubId: string;
     email: string;
     firstName: string;
     lastName: string;
+    avatarUrl: string | null;
     role: string;
-    clubId: string;
   };
 };
 
@@ -48,9 +49,7 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
-      throw new UnauthorizedException(
-        'Email ou palavra-passe inválidos.',
-      );
+      throw new UnauthorizedException('Email ou palavra-passe inválidos.');
     }
 
     const passwordIsValid = await bcrypt.compare(
@@ -59,16 +58,14 @@ export class AuthService {
     );
 
     if (!passwordIsValid) {
-      throw new UnauthorizedException(
-        'Email ou palavra-passe inválidos.',
-      );
+      throw new UnauthorizedException('Email ou palavra-passe inválidos.');
     }
 
     const payload: JwtPayload = {
       sub: user.id,
+      clubId: user.clubId,
       email: user.email,
       role: user.role.name,
-      clubId: user.clubId,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
@@ -79,11 +76,12 @@ export class AuthService {
       expiresIn: AuthService.TOKEN_EXPIRATION_SECONDS,
       user: {
         id: user.id,
+        clubId: user.clubId,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        avatarUrl: user.avatarUrl,
         role: user.role.name,
-        clubId: user.clubId,
       },
     };
   }

@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCoachDto } from './dto/create-coach.dto';
 import { UpdateCoachDto } from './dto/update-coach.dto';
@@ -12,26 +13,31 @@ import { UpdateCoachDto } from './dto/update-coach.dto';
 export class CoachesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Devolve todos os treinadores registados.
-   */
-  async findAll() {
-    return this.prisma.coach.findMany({
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
+  private readonly coachInclude = {
+    club: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
       },
+    },
+    user: {
+      select: {
+        id: true,
+        email: true,
+      },
+    },
+  } as const;
+
+  /**
+   * Devolve exclusivamente os treinadores do clube autenticado.
+   */
+  async findAll(clubId: string) {
+    return this.prisma.coach.findMany({
+      where: {
+        clubId,
+      },
+      include: this.coachInclude,
       orderBy: [
         {
           firstName: 'asc',
@@ -44,58 +50,35 @@ export class CoachesService {
   }
 
   /**
-   * Devolve um treinador através do seu identificador.
+   * Devolve um treinador, garantindo que pertence ao clube autenticado.
    */
-  async findOne(id: string) {
-    const coach = await this.prisma.coach.findUnique({
+  async findOne(id: string, clubId: string) {
+    const coach = await this.prisma.coach.findFirst({
       where: {
         id,
+        clubId,
       },
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
+      include: this.coachInclude,
     });
 
     if (!coach) {
-      throw new NotFoundException(
-        `Não foi encontrado nenhum treinador com o ID "${id}".`,
-      );
+      throw new NotFoundException('Treinador não encontrado.');
     }
 
     return coach;
   }
 
   /**
-   * Cria um novo treinador.
+   * Cria um treinador no clube autenticado.
+   * O clubId nunca é recebido através do corpo do pedido.
    */
-  async create(createCoachDto: CreateCoachDto) {
-    const {
-      clubId,
-      userId,
-      employeeNumber,
-      firstName,
-      lastName,
-      email,
-      phone,
-      specialization,
-      biography,
-      hireDate,
-      isActive,
-    } = createCoachDto;
-
+  async create(clubId: string, createCoachDto: CreateCoachDto) {
     await this.ensureClubExists(clubId);
+
+    const employeeNumber = this.normalizeOptionalText(
+      createCoachDto.employeeNumber,
+    );
+    const userId = createCoachDto.userId;
 
     if (employeeNumber) {
       await this.ensureEmployeeNumberIsAvailable(employeeNumber);
@@ -110,58 +93,38 @@ export class CoachesService {
         clubId,
         userId,
         employeeNumber,
-        firstName,
-        lastName,
-        email,
-        phone,
-        specialization,
-        biography,
-        hireDate: hireDate ? new Date(hireDate) : undefined,
-        isActive,
+        firstName: createCoachDto.firstName.trim(),
+        lastName: createCoachDto.lastName.trim(),
+        email: this.normalizeOptionalEmail(createCoachDto.email),
+        phone: this.normalizeOptionalText(createCoachDto.phone),
+        specialization: this.normalizeOptionalText(
+          createCoachDto.specialization,
+        ),
+        biography: this.normalizeOptionalText(createCoachDto.biography),
+        hireDate: createCoachDto.hireDate
+          ? new Date(createCoachDto.hireDate)
+          : undefined,
+        isActive: createCoachDto.isActive ?? true,
       },
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
+      include: this.coachInclude,
     });
   }
 
   /**
-   * Atualiza os dados de um treinador.
+   * Atualiza um treinador do clube autenticado.
+   * Não permite alterar o clube do registo.
    */
-  async update(id: string, updateCoachDto: UpdateCoachDto) {
-    const currentCoach = await this.findOne(id);
+  async update(
+    id: string,
+    clubId: string,
+    updateCoachDto: UpdateCoachDto,
+  ) {
+    const currentCoach = await this.findOne(id, clubId);
 
-    const {
-      clubId,
-      userId,
-      employeeNumber,
-      firstName,
-      lastName,
-      email,
-      phone,
-      specialization,
-      biography,
-      hireDate,
-      isActive,
-    } = updateCoachDto;
-
-    const targetClubId = clubId ?? currentCoach.clubId;
-
-    if (clubId) {
-      await this.ensureClubExists(clubId);
-    }
+    const employeeNumber =
+      updateCoachDto.employeeNumber !== undefined
+        ? this.normalizeOptionalText(updateCoachDto.employeeNumber)
+        : undefined;
 
     if (
       employeeNumber &&
@@ -170,8 +133,15 @@ export class CoachesService {
       await this.ensureEmployeeNumberIsAvailable(employeeNumber, id);
     }
 
-    if (userId && userId !== currentCoach.userId) {
-      await this.ensureUserCanBeAssociated(userId, targetClubId, id);
+    if (
+      updateCoachDto.userId &&
+      updateCoachDto.userId !== currentCoach.userId
+    ) {
+      await this.ensureUserCanBeAssociated(
+        updateCoachDto.userId,
+        clubId,
+        id,
+      );
     }
 
     return this.prisma.coach.update({
@@ -179,68 +149,51 @@ export class CoachesService {
         id,
       },
       data: {
-        clubId,
-        userId,
+        userId: updateCoachDto.userId,
         employeeNumber,
-        firstName,
-        lastName,
-        email,
-        phone,
-        specialization,
-        biography,
+        firstName: updateCoachDto.firstName?.trim(),
+        lastName: updateCoachDto.lastName?.trim(),
+        email:
+          updateCoachDto.email !== undefined
+            ? this.normalizeOptionalEmail(updateCoachDto.email)
+            : undefined,
+        phone:
+          updateCoachDto.phone !== undefined
+            ? this.normalizeOptionalText(updateCoachDto.phone)
+            : undefined,
+        specialization:
+          updateCoachDto.specialization !== undefined
+            ? this.normalizeOptionalText(updateCoachDto.specialization)
+            : undefined,
+        biography:
+          updateCoachDto.biography !== undefined
+            ? this.normalizeOptionalText(updateCoachDto.biography)
+            : undefined,
         hireDate:
-          hireDate !== undefined ? new Date(hireDate) : undefined,
-        isActive,
+          updateCoachDto.hireDate !== undefined
+            ? updateCoachDto.hireDate
+              ? new Date(updateCoachDto.hireDate)
+              : null
+            : undefined,
+        isActive: updateCoachDto.isActive,
       },
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
+      include: this.coachInclude,
     });
   }
 
   /**
-   * Remove permanentemente um treinador.
+   * Elimina um treinador do clube autenticado.
    */
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clubId: string): Promise<void> {
+    await this.findOne(id, clubId);
 
-    return this.prisma.coach.delete({
+    await this.prisma.coach.delete({
       where: {
         id,
       },
-      include: {
-        club: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-      },
     });
   }
 
-  /**
-   * Confirma que o clube existe.
-   */
   private async ensureClubExists(clubId: string): Promise<void> {
     const club = await this.prisma.club.findUnique({
       where: {
@@ -252,15 +205,10 @@ export class CoachesService {
     });
 
     if (!club) {
-      throw new BadRequestException(
-        `Não foi encontrado nenhum clube com o ID "${clubId}".`,
-      );
+      throw new BadRequestException('O clube autenticado não existe.');
     }
   }
 
-  /**
-   * Confirma que o número interno do treinador ainda não está a ser utilizado.
-   */
   private async ensureEmployeeNumberIsAvailable(
     employeeNumber: string,
     excludedCoachId?: string,
@@ -276,39 +224,29 @@ export class CoachesService {
 
     if (existingCoach && existingCoach.id !== excludedCoachId) {
       throw new ConflictException(
-        `Já existe um treinador com o número "${employeeNumber}".`,
+        'Já existe um treinador com este número interno.',
       );
     }
   }
 
-  /**
-   * Confirma que o utilizador existe, pertence ao mesmo clube e ainda não
-   * está associado a outro treinador.
-   */
   private async ensureUserCanBeAssociated(
     userId: string,
     clubId: string,
     excludedCoachId?: string,
   ): Promise<void> {
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findFirst({
       where: {
         id: userId,
+        clubId,
       },
       select: {
         id: true,
-        clubId: true,
       },
     });
 
     if (!user) {
       throw new BadRequestException(
-        `Não foi encontrado nenhum utilizador com o ID "${userId}".`,
-      );
-    }
-
-    if (user.clubId !== clubId) {
-      throw new BadRequestException(
-        'O utilizador e o treinador têm de pertencer ao mesmo clube.',
+        'O utilizador indicado não existe ou não pertence ao clube autenticado.',
       );
     }
 
@@ -326,5 +264,25 @@ export class CoachesService {
         'O utilizador indicado já está associado a outro treinador.',
       );
     }
+  }
+
+  private normalizeOptionalText(
+    value: string | undefined,
+  ): string | null | undefined {
+    if (value === undefined) {
+      return undefined;
+    }
+
+    const normalizedValue = value.trim();
+    return normalizedValue.length > 0 ? normalizedValue : null;
+  }
+
+  private normalizeOptionalEmail(
+    value: string | undefined,
+  ): string | null | undefined {
+    const normalizedValue = this.normalizeOptionalText(value);
+    return typeof normalizedValue === 'string'
+      ? normalizedValue.toLowerCase()
+      : normalizedValue;
   }
 }

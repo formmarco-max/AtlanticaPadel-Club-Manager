@@ -17,15 +17,6 @@ import { ReservationStatus } from '../../generated/prisma/enums';
 
 export class CreateReservationDto {
   @ApiProperty({
-    example: '14141ecf-b096-4381-80f9-dbecb89a6d0a',
-    description: 'Identificador UUID do clube ao qual a reserva pertence.',
-  })
-  @IsUUID('4', {
-    message: 'O identificador do clube deve ser um UUID válido.',
-  })
-  clubId: string;
-
-  @ApiProperty({
     example: 'e3dc4c7f-3b9a-4a90-8601-fe462464c102',
     description: 'Identificador UUID do campo reservado.',
   })

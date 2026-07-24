@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@nestjs/serve-static": "^5.0.5",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@types/multer": "^2.2.0"
+  }
+}

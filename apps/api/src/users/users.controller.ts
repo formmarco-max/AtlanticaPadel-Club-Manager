@@ -6,225 +6,115 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseFilePipeBuilder,
   ParseUUIDPipe,
   Patch,
   Post,
-  Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { memoryStorage } from 'multer';
 
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersQueryDto } from './dto/users-query.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('Users')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN', 'OWNER')
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get('me')
+  getMyProfile(@CurrentUser('id') userId: string) {
+    return this.usersService.getMyProfile(userId);
+  }
+
+  @Patch('me')
+  updateMyProfile(
+    @CurrentUser('id') userId: string,
+    @Body() dto: UpdateMyProfileDto,
+  ) {
+    return this.usersService.updateMyProfile(userId, dto);
+  }
+
+  @Post('me/avatar')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  uploadMyAvatar(
+    @CurrentUser('id') userId: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /(jpeg|jpg|png|webp)$/ })
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .build({ fileIsRequired: true }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.usersService.updateMyAvatar(userId, file);
+  }
+
+  @Delete('me/avatar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMyAvatar(@CurrentUser('id') userId: string): Promise<void> {
+    await this.usersService.removeMyAvatar(userId);
+  }
 
   @Post()
-  @ApiOperation({
-    summary: 'Criar um utilizador',
-    description:
-      'Cria um novo utilizador e guarda a palavra-passe sob a forma de hash.',
-  })
-  @ApiCreatedResponse({
-    description: 'Utilizador criado com sucesso.',
-  })
-  @ApiBadRequestResponse({
-    description: 'Os dados enviados são inválidos.',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Token JWT ausente, inválido ou expirado.',
-  })
-  @ApiForbiddenResponse({
-    description:
-      'O utilizador autenticado não possui permissão para criar utilizadores.',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'O perfil de utilizador indicado não existe.',
-  })
-  @ApiConflictResponse({
-    description:
-      'Já existe um utilizador com o email indicado.',
-  })
+  @Roles('ADMIN', 'OWNER')
   create(
-    @Body() createUserDto: CreateUserDto,
+    @CurrentUser('clubId') clubId: string,
+    @Body() dto: CreateUserDto,
   ) {
-    return this.usersService.create(createUserDto);
+    return this.usersService.create(clubId, dto);
   }
 
   @Get()
-  @ApiOperation({
-    summary: 'Obter utilizadores',
-    description:
-      'Devolve uma lista paginada de utilizadores, com pesquisa, filtros e ordenação, sem expor os hashes das palavras-passe.',
-  })
-  @ApiOkResponse({
-    description:
-      'Lista paginada de utilizadores devolvida com sucesso.',
-  })
-  @ApiBadRequestResponse({
-    description:
-      'Os parâmetros de consulta são inválidos.',
-  })
-  @ApiUnauthorizedResponse({
-    description:
-      'Token JWT ausente, inválido ou expirado.',
-  })
-  @ApiForbiddenResponse({
-    description:
-      'O utilizador autenticado não possui permissão para consultar utilizadores.',
-  })
-  findAll(
-    @Query() queryDto: UsersQueryDto,
-  ) {
-    return this.usersService.findAll(queryDto);
+  @Roles('ADMIN', 'OWNER')
+  findAll(@CurrentUser('clubId') clubId: string) {
+    return this.usersService.findAll(clubId);
   }
 
   @Get(':id')
-  @ApiOperation({
-    summary: 'Obter um utilizador por ID',
-    description:
-      'Devolve um utilizador através do respetivo UUID.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'UUID do utilizador.',
-    example: 'b521fa36-8fd0-4329-8f1b-d4c130ff32f5',
-  })
-  @ApiOkResponse({
-    description: 'Utilizador devolvido com sucesso.',
-  })
-  @ApiBadRequestResponse({
-    description:
-      'O identificador fornecido não é um UUID válido.',
-  })
-  @ApiUnauthorizedResponse({
-    description:
-      'Token JWT ausente, inválido ou expirado.',
-  })
-  @ApiForbiddenResponse({
-    description:
-      'O utilizador autenticado não possui permissão para consultar este utilizador.',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'O utilizador solicitado não foi encontrado.',
-  })
+  @Roles('ADMIN', 'OWNER')
   findOne(
-    @Param('id', new ParseUUIDPipe({ version: '4' }))
-    id: string,
+    @CurrentUser('clubId') clubId: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ) {
-    return this.usersService.findOne(id);
+    return this.usersService.findOne(clubId, id);
   }
 
   @Patch(':id')
-  @ApiOperation({
-    summary: 'Atualizar um utilizador',
-    description:
-      'Atualiza parcialmente os dados de um utilizador.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'UUID do utilizador.',
-    example: 'b521fa36-8fd0-4329-8f1b-d4c130ff32f5',
-  })
-  @ApiOkResponse({
-    description:
-      'Utilizador atualizado com sucesso.',
-  })
-  @ApiBadRequestResponse({
-    description:
-      'O identificador ou os dados enviados são inválidos.',
-  })
-  @ApiUnauthorizedResponse({
-    description:
-      'Token JWT ausente, inválido ou expirado.',
-  })
-  @ApiForbiddenResponse({
-    description:
-      'O utilizador autenticado não possui permissão para atualizar utilizadores.',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'O utilizador ou perfil solicitado não foi encontrado.',
-  })
-  @ApiConflictResponse({
-    description:
-      'Já existe outro utilizador com o email indicado.',
-  })
+  @Roles('ADMIN', 'OWNER')
   update(
-    @Param('id', new ParseUUIDPipe({ version: '4' }))
-    id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser('clubId') clubId: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() dto: UpdateUserDto,
   ) {
-    return this.usersService.update(
-      id,
-      updateUserDto,
-    );
+    return this.usersService.update(clubId, id, dto);
   }
 
   @Delete(':id')
+  @Roles('ADMIN', 'OWNER')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({
-    summary: 'Eliminar um utilizador',
-    description:
-      'Elimina permanentemente um utilizador através do respetivo UUID.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'UUID do utilizador.',
-    example: 'b521fa36-8fd0-4329-8f1b-d4c130ff32f5',
-  })
-  @ApiNoContentResponse({
-    description:
-      'Utilizador eliminado com sucesso.',
-  })
-  @ApiBadRequestResponse({
-    description:
-      'O identificador fornecido não é um UUID válido.',
-  })
-  @ApiUnauthorizedResponse({
-    description:
-      'Token JWT ausente, inválido ou expirado.',
-  })
-  @ApiForbiddenResponse({
-    description:
-      'O utilizador autenticado não possui permissão para eliminar utilizadores.',
-  })
-  @ApiNotFoundResponse({
-    description:
-      'O utilizador solicitado não foi encontrado.',
-  })
   async remove(
-    @Param('id', new ParseUUIDPipe({ version: '4' }))
-    id: string,
+    @CurrentUser('clubId') clubId: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<void> {
-    await this.usersService.remove(id);
+    await this.usersService.remove(clubId, id);
   }
 }

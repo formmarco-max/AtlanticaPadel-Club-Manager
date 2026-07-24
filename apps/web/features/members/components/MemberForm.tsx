@@ -93,7 +93,7 @@ interface MemberPayload {
 interface MemberFormProps {
   mode: 'create' | 'edit';
   member?: Member | null;
-  onSuccess: () => void;
+  onSuccess: (member: Member) => void;
   onCancel: () => void;
 }
 
@@ -228,13 +228,25 @@ export function MemberForm({
 
       const payload = buildPayload(values);
 
+      let savedMember: Member;
+
       if (mode === 'create') {
-        await api.post('/members', payload);
+        const response = await api.post<ApiResponse<Member>>(
+          '/members',
+          payload,
+        );
+
+        savedMember = response.data.data;
       } else {
-        await api.patch(`/members/${member?.id}`, payload);
+        const response = await api.patch<ApiResponse<Member>>(
+          `/members/${member?.id}`,
+          payload,
+        );
+
+        savedMember = response.data.data;
       }
 
-      onSuccess();
+      onSuccess(savedMember);
     } catch (error) {
       console.error(error);
       setSubmitError(getApiErrorMessage(error));

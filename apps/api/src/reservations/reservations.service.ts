@@ -54,8 +54,11 @@ export class ReservationsService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll() {
+  async findAll(clubId: string) {
     return this.prisma.reservation.findMany({
+      where: {
+        clubId,
+      },
       include: this.reservationInclude,
       orderBy: {
         startTime: 'asc',
@@ -63,9 +66,12 @@ export class ReservationsService {
     });
   }
 
-  async findOne(id: string) {
-    const reservation = await this.prisma.reservation.findUnique({
-      where: { id },
+  async findOne(id: string, clubId: string) {
+    const reservation = await this.prisma.reservation.findFirst({
+      where: {
+        id,
+        clubId,
+      },
       include: this.reservationInclude,
     });
 
@@ -76,23 +82,26 @@ export class ReservationsService {
     return reservation;
   }
 
-  async create(createReservationDto: CreateReservationDto) {
+  async create(
+    clubId: string,
+    createReservationDto: CreateReservationDto,
+  ) {
     const startTime = new Date(createReservationDto.startTime);
     const endTime = new Date(createReservationDto.endTime);
 
     this.validateInitialStatus(createReservationDto.status);
     this.validateDateRange(startTime, endTime);
 
+    await this.validateClubExists(clubId);
+
     const court = await this.validateCourt(
       createReservationDto.courtId,
-      createReservationDto.clubId,
+      clubId,
     );
-
-    await this.validateClubExists(createReservationDto.clubId);
 
     await this.validateMember(
       createReservationDto.memberId,
-      createReservationDto.clubId,
+      clubId,
     );
 
     this.validateReservationIsInFuture(startTime);
@@ -113,7 +122,7 @@ export class ReservationsService {
 
     return this.prisma.reservation.create({
       data: {
-        clubId: createReservationDto.clubId,
+        clubId,
         courtId: createReservationDto.courtId,
         memberId: createReservationDto.memberId,
         startTime,
@@ -129,12 +138,10 @@ export class ReservationsService {
 
   async update(
     id: string,
+    clubId: string,
     updateReservationDto: UpdateReservationDto,
   ) {
-    const existingReservation = await this.findOne(id);
-
-    const clubId =
-      updateReservationDto.clubId ?? existingReservation.clubId;
+    const existingReservation = await this.findOne(id, clubId);
 
     const courtId =
       updateReservationDto.courtId ?? existingReservation.courtId;
@@ -204,7 +211,6 @@ export class ReservationsService {
     return this.prisma.reservation.update({
       where: { id },
       data: {
-        clubId: updateReservationDto.clubId,
         courtId: updateReservationDto.courtId,
         memberId: updateReservationDto.memberId,
         startTime:
@@ -232,12 +238,11 @@ export class ReservationsService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id);
+  async remove(id: string, clubId: string) {
+    await this.findOne(id, clubId);
 
     return this.prisma.reservation.delete({
       where: { id },
-      include: this.reservationInclude,
     });
   }
 

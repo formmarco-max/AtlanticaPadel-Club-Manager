@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronRight,
   Clock3,
+  Command,
   Search,
   Settings,
   UserRound,
@@ -15,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
+import { UserAvatar } from '@/components/common/UserAvatar';
 import { useAuth } from '@/hooks/useAuth';
 
 interface HeaderNotification {
@@ -45,8 +47,7 @@ const initialNotifications: HeaderNotification[] = [
   {
     id: 1,
     title: 'Nova reserva confirmada',
-    description:
-      'Foi registada uma nova reserva para o campo Atlântico 1.',
+    description: 'Foi registada uma nova reserva para o campo Atlântico 1.',
     time: 'Há 5 min.',
     isRead: false,
     type: 'reservation',
@@ -54,8 +55,7 @@ const initialNotifications: HeaderNotification[] = [
   {
     id: 2,
     title: 'Pagamento pendente',
-    description:
-      'Existe uma mensalidade cujo pagamento ainda não foi confirmado.',
+    description: 'Existe uma mensalidade cujo pagamento ainda não foi confirmado.',
     time: 'Há 25 min.',
     isRead: false,
     type: 'payment',
@@ -63,8 +63,7 @@ const initialNotifications: HeaderNotification[] = [
   {
     id: 3,
     title: 'Resumo diário disponível',
-    description:
-      'O resumo operacional do clube já está disponível.',
+    description: 'O resumo operacional do clube já está disponível.',
     time: 'Há 1 hora',
     isRead: true,
     type: 'system',
@@ -73,6 +72,7 @@ const initialNotifications: HeaderNotification[] = [
 
 function formatRole(role: string): string {
   const roleNames: Record<string, string> = {
+    OWNER: 'Proprietário',
     ADMIN: 'Administrador',
     MANAGER: 'Gestor',
     STAFF: 'Colaborador',
@@ -90,19 +90,7 @@ function getGreeting(hour: number): string {
 }
 
 function capitalize(value: string): string {
-  return value
-    ? value.charAt(0).toUpperCase() + value.slice(1)
-    : value;
-}
-
-function getInitials(
-  firstName?: string,
-  lastName?: string,
-): string {
-  const firstInitial = firstName?.trim().charAt(0) ?? '';
-  const lastInitial = lastName?.trim().charAt(0) ?? '';
-
-  return `${firstInitial}${lastInitial}`.toUpperCase() || 'U';
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
 }
 
 function formatRouteSegment(segment: string): string {
@@ -110,19 +98,12 @@ function formatRouteSegment(segment: string): string {
 
   const decodedSegment = decodeURIComponent(segment);
 
-  if (
-    decodedSegment.length > 20 ||
-    decodedSegment.includes('-')
-  ) {
-    return 'Detalhes';
-  }
+  if (decodedSegment.length > 20) return 'Detalhes';
 
   return capitalize(decodedSegment.replaceAll('-', ' '));
 }
 
-function getNotificationIcon(
-  type: HeaderNotification['type'],
-) {
+function getNotificationIcon(type: HeaderNotification['type']) {
   if (type === 'reservation') return CalendarDays;
   if (type === 'payment') return Clock3;
   return Bell;
@@ -132,27 +113,20 @@ export function AppHeader() {
   const { user } = useAuth();
   const pathname = usePathname();
 
-  const [currentDate, setCurrentDate] = useState<Date | null>(
-    null,
-  );
-  const [notifications, setNotifications] = useState<
-    HeaderNotification[]
-  >(initialNotifications);
-  const [isNotificationsOpen, setIsNotificationsOpen] =
-    useState(false);
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  const [notifications, setNotifications] =
+    useState<HeaderNotification[]>(initialNotifications);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setCurrentDate(new Date());
-
-    const interval = window.setInterval(() => {
-      setCurrentDate(new Date());
-    }, 60_000);
-
+    const interval = window.setInterval(() => setCurrentDate(new Date()), 60_000);
     return () => window.clearInterval(interval);
   }, []);
 
@@ -167,22 +141,31 @@ export function AppHeader() {
         setIsNotificationsOpen(false);
       }
 
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(target)
-      ) {
+      if (profileRef.current && !profileRef.current.contains(target)) {
         setIsProfileOpen(false);
       }
     }
 
     document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
-    return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleOutsideClick,
-      );
-    };
+  useEffect(() => {
+    function handleKeyboardShortcut(event: KeyboardEvent): void {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+
+      if (event.key === 'Escape') {
+        setIsNotificationsOpen(false);
+        setIsProfileOpen(false);
+        searchRef.current?.blur();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardShortcut);
+    return () => window.removeEventListener('keydown', handleKeyboardShortcut);
   }, []);
 
   const breadcrumbs = useMemo(() => {
@@ -219,8 +202,8 @@ export function AppHeader() {
     : '';
 
   function markAllNotificationsAsRead(): void {
-    setNotifications((currentNotifications) =>
-      currentNotifications.map((notification) => ({
+    setNotifications((items) =>
+      items.map((notification) => ({
         ...notification,
         isRead: true,
       })),
@@ -228,8 +211,8 @@ export function AppHeader() {
   }
 
   function markNotificationAsRead(id: number): void {
-    setNotifications((currentNotifications) =>
-      currentNotifications.map((notification) =>
+    setNotifications((items) =>
+      items.map((notification) =>
         notification.id === id
           ? { ...notification, isRead: true }
           : notification,
@@ -238,18 +221,15 @@ export function AppHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/85">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-background/88 shadow-[0_8px_30px_-26px_rgba(15,23,42,0.45)] backdrop-blur-xl supports-[backdrop-filter]:bg-background/78">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-20 items-center justify-between gap-4">
           <div className="min-w-0">
             <h1 className="truncate text-lg font-semibold tracking-tight sm:text-xl">
               {greeting}
               {user?.firstName ? `, ${user.firstName}` : ''}
-              <span aria-hidden="true" className="ml-1">
-                👋
-              </span>
+              <span aria-hidden="true" className="ml-1">👋</span>
             </h1>
-
             <p className="mt-1 hidden truncate text-sm text-muted-foreground sm:block">
               {formattedDate}
             </p>
@@ -258,19 +238,17 @@ export function AppHeader() {
           <div className="flex shrink-0 items-center gap-2">
             <div className="relative hidden xl:block">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
               <input
+                ref={searchRef}
                 type="search"
                 value={searchValue}
-                onChange={(event) =>
-                  setSearchValue(event.target.value)
-                }
+                onChange={(event) => setSearchValue(event.target.value)}
                 placeholder="Pesquisar..."
                 aria-label="Pesquisar na aplicação"
-                className="h-10 w-64 rounded-xl border bg-muted/30 pl-9 pr-9 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:bg-background focus:ring-2 focus:ring-primary/15"
+                className="h-10 w-72 rounded-xl border border-slate-200 bg-slate-50/70 pl-9 pr-20 text-sm outline-none transition-all placeholder:text-muted-foreground focus:border-primary/40 focus:bg-background focus:ring-4 focus:ring-primary/10"
               />
 
-              {searchValue && (
+              {searchValue ? (
                 <button
                   type="button"
                   aria-label="Limpar pesquisa"
@@ -279,6 +257,10 @@ export function AppHeader() {
                 >
                   <X className="size-4" />
                 </button>
+              ) : (
+                <span className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground shadow-sm">
+                  <Command className="size-3" /> K
+                </span>
               )}
             </div>
 
@@ -291,10 +273,9 @@ export function AppHeader() {
                   setIsNotificationsOpen((current) => !current);
                   setIsProfileOpen(false);
                 }}
-                className="relative flex size-10 items-center justify-center rounded-xl border bg-background text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="relative flex size-10 items-center justify-center rounded-xl border border-slate-200 bg-background text-muted-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:bg-muted hover:text-foreground hover:shadow-md"
               >
                 <Bell className="size-5" />
-
                 {unreadNotifications > 0 && (
                   <span className="absolute -right-1 -top-1 flex min-w-5 items-center justify-center rounded-full border-2 border-background bg-red-500 px-1 text-[10px] font-bold leading-4 text-white">
                     {unreadNotifications}
@@ -303,8 +284,8 @@ export function AppHeader() {
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-2xl border bg-background shadow-xl">
-                  <div className="flex items-center justify-between border-b px-4 py-3">
+                <div className="absolute right-0 top-12 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-2xl border bg-background shadow-2xl">
+                  <div className="flex items-center justify-between border-b px-4 py-3.5">
                     <div>
                       <p className="font-semibold">Notificações</p>
                       <p className="text-xs text-muted-foreground">
@@ -347,22 +328,18 @@ export function AppHeader() {
                           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
                             <NotificationIcon className="size-5" />
                           </div>
-
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-3">
                               <p className="text-sm font-medium">
                                 {notification.title}
                               </p>
-
                               {!notification.isRead && (
                                 <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
                               )}
                             </div>
-
                             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                               {notification.description}
                             </p>
-
                             <p className="mt-2 text-[11px] font-medium text-muted-foreground">
                               {notification.time}
                             </p>
@@ -370,15 +347,6 @@ export function AppHeader() {
                         </button>
                       );
                     })}
-                  </div>
-
-                  <div className="border-t bg-muted/20 p-3">
-                    <button
-                      type="button"
-                      className="flex h-9 w-full items-center justify-center rounded-lg text-sm font-medium text-primary transition-colors hover:bg-primary/10"
-                    >
-                      Ver todas as notificações
-                    </button>
                   </div>
                 </div>
               )}
@@ -394,14 +362,9 @@ export function AppHeader() {
                     setIsProfileOpen((current) => !current);
                     setIsNotificationsOpen(false);
                   }}
-                  className="flex items-center gap-3 rounded-xl border bg-background p-1.5 pr-2 transition-colors hover:bg-muted"
+                  className="flex items-center gap-3 rounded-xl border border-slate-200 bg-background p-1.5 pr-2 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-muted/60 hover:shadow-md"
                 >
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-sm font-semibold text-primary-foreground shadow-sm ring-1 ring-primary/20">
-                    {getInitials(
-                      user.firstName,
-                      user.lastName,
-                    )}
-                  </div>
+                  <UserAvatar user={user} size="sm" showStatus />
 
                   <div className="hidden min-w-0 text-left md:block">
                     <p className="max-w-36 truncate text-sm font-medium leading-none">
@@ -420,21 +383,18 @@ export function AppHeader() {
                 </button>
 
                 {isProfileOpen && (
-                  <div className="absolute right-0 top-14 z-50 w-64 overflow-hidden rounded-2xl border bg-background shadow-xl">
-                    <div className="border-b p-4">
+                  <div className="absolute right-0 top-14 z-50 w-72 overflow-hidden rounded-2xl border bg-background shadow-2xl">
+                    <div className="bg-gradient-to-br from-primary/[0.08] to-emerald-500/[0.06] p-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-sm font-semibold text-primary-foreground shadow-sm ring-1 ring-primary/20">
-                          {getInitials(
-                            user.firstName,
-                            user.lastName,
-                          )}
-                        </div>
-
+                        <UserAvatar user={user} size="md" showStatus />
                         <div className="min-w-0">
                           <p className="truncate text-sm font-semibold">
                             {fullName}
                           </p>
-                          <p className="mt-0.5 text-xs text-muted-foreground">
+                          <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                            {user.email}
+                          </p>
+                          <p className="mt-1 text-[11px] font-medium text-primary">
                             {formatRole(user.role)}
                           </p>
                         </div>
@@ -445,23 +405,22 @@ export function AppHeader() {
                       <Link
                         href="/settings"
                         onClick={() => setIsProfileOpen(false)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-muted"
                       >
                         <UserRound className="size-4 text-muted-foreground" />
                         O meu perfil
                       </Link>
-
                       <Link
                         href="/settings"
                         onClick={() => setIsProfileOpen(false)}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-muted"
                       >
                         <Settings className="size-4 text-muted-foreground" />
                         Definições
                       </Link>
                     </div>
 
-                    <div className="border-t px-4 py-3 text-xs text-muted-foreground">
+                    <div className="border-t bg-muted/20 px-4 py-3 text-xs text-muted-foreground">
                       Atlantica Padel Club Manager
                     </div>
                   </div>
@@ -471,7 +430,7 @@ export function AppHeader() {
           </div>
         </div>
 
-        <div className="hidden h-9 items-center border-t sm:flex">
+        <div className="hidden h-9 items-center border-t border-slate-200/70 sm:flex">
           <nav
             aria-label="Breadcrumb"
             className="flex min-w-0 items-center gap-1 text-xs text-muted-foreground"

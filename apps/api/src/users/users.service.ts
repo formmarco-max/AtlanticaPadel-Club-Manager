@@ -4,30 +4,117 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { mkdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
+import sharp from 'sharp';
 
-import { Prisma } from '../generated/prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { USER_SELECT } from './constants/user-select.constant';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateMyProfileDto } from './dto/update-my-profile.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersQueryDto } from './dto/users-query.dto';
+
+const userSelect = {
+  id: true,
+  clubId: true,
+  roleId: true,
+  email: true,
+  firstName: true,
+  lastName: true,
+  avatarUrl: true,
+  isActive: true,
+  createdAt: true,
+  updatedAt: true,
+  role: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+    },
+  },
+};
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const normalizedEmail = createUserDto.email
-      .trim()
-      .toLowerCase();
+  async getMyProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: userSelect,
+    });
+
+    if (!user || !user.isActive) {
+      throw new NotFoundException(
+        'O perfil do utilizador não foi encontrado.',
+      );
+    }
+
+    return this.toProfileResponse(user);
+  }
+
+  async updateMyProfile(userId: string, dto: UpdateMyProfileDto) {
+    await this.ensureAuthenticatedUserExists(userId);
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName: dto.firstName.trim(),
+        lastName: dto.lastName.trim(),
+      },
+      select: userSelect,
+    });
+
+    return this.toProfileResponse(user);
+  }
+
+  async updateMyAvatar(userId: string, file: Express.Multer.File) {
+    await this.ensureAuthenticatedUserExists(userId);
+
+    const relativeDirectory = join('uploads', 'users', userId);
+    const absoluteDirectory = join(process.cwd(), relativeDirectory);
+    const absoluteFilePath = join(absoluteDirectory, 'avatar.webp');
+    const avatarUrl = `/${relativeDirectory.replaceAll('\\', '/')}/avatar.webp`;
+
+    await mkdir(absoluteDirectory, { recursive: true });
+
+    await sharp(file.buffer)
+      .rotate()
+      .resize(512, 512, {
+        fit: 'cover',
+        position: 'centre',
+      })
+      .webp({ quality: 82 })
+      .toFile(absoluteFilePath);
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+      select: userSelect,
+    });
+
+    return this.toProfileResponse(user);
+  }
+
+  async removeMyAvatar(userId: string): Promise<void> {
+    await this.ensureAuthenticatedUserExists(userId);
+
+    await rm(join(process.cwd(), 'uploads', 'users', userId), {
+      recursive: true,
+      force: true,
+    });
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl: null },
+    });
+  }
+
+  async create(clubId: string, dto: CreateUserDto) {
+    const normalizedEmail = dto.email.trim().toLowerCase();
 
     const existingUser = await this.prisma.user.findUnique({
-      where: {
-        email: normalizedEmail,
-      },
-      select: {
-        id: true,
-      },
+      where: { email: normalizedEmail },
+      select: { id: true },
     });
 
     if (existingUser) {
@@ -36,130 +123,39 @@ export class UsersService {
       );
     }
 
-    await this.ensureClubExists(createUserDto.clubId);
-    await this.ensureRoleExists(createUserDto.roleId);
+    await this.ensureRoleExists(dto.roleId);
 
-    const passwordHash = await bcrypt.hash(
-      createUserDto.password,
-      12,
-    );
+    const passwordHash = await bcrypt.hash(dto.password, 12);
 
     return this.prisma.user.create({
       data: {
-        clubId: createUserDto.clubId,
-        roleId: createUserDto.roleId,
+        clubId,
+        roleId: dto.roleId,
         email: normalizedEmail,
         passwordHash,
-        firstName: createUserDto.firstName.trim(),
-        lastName: createUserDto.lastName.trim(),
-        isActive: createUserDto.isActive ?? true,
+        firstName: dto.firstName.trim(),
+        lastName: dto.lastName.trim(),
+        isActive: dto.isActive ?? true,
       },
-      select: USER_SELECT,
+      select: userSelect,
     });
   }
 
-  async findAll(queryDto: UsersQueryDto) {
-    const {
-      page = 1,
-      limit = 10,
-      q,
-      role,
-      active,
-      sort = 'createdAt',
-      order = 'desc',
-    } = queryDto;
-
-    const skip = (page - 1) * limit;
-    const search = q?.trim();
-
-    const where: Prisma.UserWhereInput = {
-      ...(typeof active === 'boolean'
-        ? {
-            isActive: active,
-          }
-        : {}),
-
-      ...(role
-        ? {
-            role: {
-              name: {
-                equals: role,
-                mode: 'insensitive',
-              },
-            },
-          }
-        : {}),
-
-      ...(search
-        ? {
-            OR: [
-              {
-                firstName: {
-                  contains: search,
-                  mode: 'insensitive',
-                },
-              },
-              {
-                lastName: {
-                  contains: search,
-                  mode: 'insensitive',
-                },
-              },
-              {
-                email: {
-                  contains: search,
-                  mode: 'insensitive',
-                },
-              },
-            ],
-          }
-        : {}),
-    };
-
-    const orderBy: Prisma.UserOrderByWithRelationInput = {
-      [sort]: order,
-    };
-
-    const [users, totalItems] = await this.prisma.$transaction([
-      this.prisma.user.findMany({
-        where,
-        skip,
-        take: limit,
-        select: USER_SELECT,
-        orderBy: [
-          orderBy,
-          {
-            id: 'asc',
-          },
-        ],
-      }),
-
-      this.prisma.user.count({
-        where,
-      }),
-    ]);
-
-    const totalPages = Math.ceil(totalItems / limit);
-
-    return {
-      items: users,
-      meta: {
-        page,
-        limit,
-        totalItems,
-        totalPages,
-        hasPreviousPage: page > 1,
-        hasNextPage: page < totalPages,
-      },
-    };
+  findAll(clubId: string) {
+    return this.prisma.user.findMany({
+      where: { clubId },
+      select: userSelect,
+      orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }],
+    });
   }
 
-  async findOne(id: string) {
-    const user = await this.prisma.user.findUnique({
+  async findOne(clubId: string, id: string) {
+    const user = await this.prisma.user.findFirst({
       where: {
         id,
+        clubId,
       },
-      select: USER_SELECT,
+      select: userSelect,
     });
 
     if (!user) {
@@ -171,88 +167,90 @@ export class UsersService {
     return user;
   }
 
-  async update(
-    id: string,
-    updateUserDto: UpdateUserDto,
-  ) {
-    await this.ensureUserExists(id);
+  async update(clubId: string, id: string, dto: UpdateUserDto) {
+    await this.ensureManagedUserExists(clubId, id);
 
-    if (updateUserDto.clubId) {
-      await this.ensureClubExists(updateUserDto.clubId);
-    }
-
-    if (updateUserDto.roleId) {
-      await this.ensureRoleExists(updateUserDto.roleId);
+    if (dto.roleId) {
+      await this.ensureRoleExists(dto.roleId);
     }
 
     let normalizedEmail: string | undefined;
 
-    if (updateUserDto.email) {
-      normalizedEmail = updateUserDto.email
-        .trim()
-        .toLowerCase();
+    if (dto.email !== undefined) {
+      normalizedEmail = dto.email.trim().toLowerCase();
 
-      const existingUser = await this.prisma.user.findFirst({
+      const duplicate = await this.prisma.user.findFirst({
         where: {
           email: normalizedEmail,
-          NOT: {
-            id,
-          },
+          NOT: { id },
         },
-        select: {
-          id: true,
-        },
+        select: { id: true },
       });
 
-      if (existingUser) {
+      if (duplicate) {
         throw new ConflictException(
           'Já existe outro utilizador com este endereço de email.',
         );
       }
     }
 
-    const passwordHash = updateUserDto.password
-      ? await bcrypt.hash(updateUserDto.password, 12)
+    const passwordHash = dto.password
+      ? await bcrypt.hash(dto.password, 12)
       : undefined;
 
     return this.prisma.user.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
-        clubId: updateUserDto.clubId,
-        roleId: updateUserDto.roleId,
+        roleId: dto.roleId,
         email: normalizedEmail,
         passwordHash,
-        firstName: updateUserDto.firstName?.trim(),
-        lastName: updateUserDto.lastName?.trim(),
-        isActive: updateUserDto.isActive,
+        firstName: dto.firstName?.trim(),
+        lastName: dto.lastName?.trim(),
+        isActive: dto.isActive,
       },
-      select: USER_SELECT,
+      select: userSelect,
     });
   }
 
-  async remove(id: string) {
-    await this.ensureUserExists(id);
+  async remove(clubId: string, id: string): Promise<void> {
+    await this.ensureManagedUserExists(clubId, id);
 
-    return this.prisma.user.delete({
-      where: {
-        id,
-      },
-      select: USER_SELECT,
+    await this.prisma.user.delete({
+      where: { id },
+    });
+
+    await rm(join(process.cwd(), 'uploads', 'users', id), {
+      recursive: true,
+      force: true,
     });
   }
 
-  private async ensureUserExists(
-    id: string,
-  ): Promise<void> {
+  private async ensureAuthenticatedUserExists(userId: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
-      where: {
-        id,
-      },
+      where: { id: userId },
       select: {
         id: true,
+        isActive: true,
       },
+    });
+
+    if (!user || !user.isActive) {
+      throw new NotFoundException(
+        'O perfil do utilizador não foi encontrado.',
+      );
+    }
+  }
+
+  private async ensureManagedUserExists(
+    clubId: string,
+    id: string,
+  ): Promise<void> {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+        clubId,
+      },
+      select: { id: true },
     });
 
     if (!user) {
@@ -262,35 +260,10 @@ export class UsersService {
     }
   }
 
-  private async ensureClubExists(
-    clubId: string,
-  ): Promise<void> {
-    const club = await this.prisma.club.findUnique({
-      where: {
-        id: clubId,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (!club) {
-      throw new NotFoundException(
-        'O clube indicado não foi encontrado.',
-      );
-    }
-  }
-
-  private async ensureRoleExists(
-    roleId: string,
-  ): Promise<void> {
+  private async ensureRoleExists(roleId: string): Promise<void> {
     const role = await this.prisma.role.findUnique({
-      where: {
-        id: roleId,
-      },
-      select: {
-        id: true,
-      },
+      where: { id: roleId },
+      select: { id: true },
     });
 
     if (!role) {
@@ -298,5 +271,25 @@ export class UsersService {
         'O perfil de utilizador indicado não foi encontrado.',
       );
     }
+  }
+
+  private toProfileResponse(user: {
+    id: string;
+    clubId: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl: string | null;
+    role: { name: string };
+  }) {
+    return {
+      id: user.id,
+      clubId: user.clubId,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      avatarUrl: user.avatarUrl,
+      role: user.role.name,
+    };
   }
 }
