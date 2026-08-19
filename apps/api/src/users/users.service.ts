@@ -24,6 +24,7 @@ const userSelect = {
   isActive: true,
   createdAt: true,
   updatedAt: true,
+  phone: true,
   role: {
     select: {
       id: true,
@@ -60,6 +61,8 @@ export class UsersService {
       data: {
         firstName: dto.firstName.trim(),
         lastName: dto.lastName.trim(),
+        email: dto.email.trim(),
+        phone: dto.phone?.trim() || null,
       },
       select: userSelect,
     });
@@ -279,6 +282,7 @@ export class UsersService {
     email: string;
     firstName: string;
     lastName: string;
+    phone: string | null;
     avatarUrl: string | null;
     role: { name: string };
   }) {
@@ -288,6 +292,7 @@ export class UsersService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      phone: user.phone,
       avatarUrl: user.avatarUrl,
       role: user.role.name,
     };
