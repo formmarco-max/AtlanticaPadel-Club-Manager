@@ -1,13 +1,12 @@
 # 🎾 Atlantica Padel Club Manager
 
-::: {align="center"}
+<div align="center">
+
 ### **Simplifying Padel Club Management**
 
-**Plataforma web full-stack para gestão integrada de clubes e academias
-de padel**
+**Plataforma web full-stack para gestão integrada de clubes e academias de padel**
 
-Projeto Final de Licenciatura · Gestão de Sistemas e Computação ·
-Universidade Atlântica · 2026
+Projeto Final de Licenciatura · Gestão de Sistemas e Computação · Universidade Atlântica · 2026
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -16,7 +15,8 @@ Universidade Atlântica · 2026
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma)
 ![Status](https://img.shields.io/badge/Status-MVP%20Concluído-success)
-:::
+
+</div>
 
 ------------------------------------------------------------------------
 
@@ -41,18 +41,18 @@ do Projeto Final da Licenciatura em Gestão de Sistemas e Computação da
 
 ## ✨ Principais funcionalidades
 
-  Área             Funcionalidade                                       Estado
-  ---------------- --------------------------------------------------- --------
-  🔐 Segurança     Autenticação com JWT                                   ✅
-  🛡️ Autorização   Controlo de acesso baseado em perfis (RBAC)            ✅
-  👥 Sócios        Criação, consulta, edição e remoção                    ✅
-  🎓 Treinadores   Criação, consulta, edição e remoção                    ✅
-  🎾 Campos        Gestão de campos e respetivas características          ✅
-  📅 Reservas      CRUD, cancelamento e validação de disponibilidade      ✅
-  📊 Dashboard     KPIs e resumo da atividade operacional                 ✅
-  ⚙️ Definições    Gestão de dados e preferências do utilizador           ✅
-  📑 Relatórios    Estrutura base da interface                          🧩 MVP
-  📚 API           API REST documentada com Swagger/OpenAPI               ✅
+| Área | Funcionalidade | Estado |
+|---|---|:---:|
+| 🔐 Segurança | Autenticação com JWT | ✅ |
+| 🛡️ Autorização | Controlo de acesso baseado em perfis (RBAC) | ✅ |
+| 👥 Sócios | Criação, consulta, edição e remoção | ✅ |
+| 🎓 Treinadores | Criação, consulta, edição e remoção | ✅ |
+| 🎾 Campos | Gestão de campos e respetivas características | ✅ |
+| 📅 Reservas | CRUD, cancelamento e validação de disponibilidade | ✅ |
+| 📊 Dashboard | KPIs e resumo da atividade operacional | ✅ |
+| ⚙️ Definições | Gestão de dados e preferências do utilizador | ✅ |
+| 📑 Relatórios | Estrutura base da interface | 🧩 MVP |
+| 📚 API | API REST documentada com Swagger/OpenAPI | ✅ |
 
 ------------------------------------------------------------------------
 
@@ -153,17 +153,17 @@ principais validações implementadas encontram-se:
 
 ## 🧪 Testes e validação
 
-  Área validada           Resultado
-  --------------------- -------------
-  Autenticação           ✔️ Validado
-  Autorização            ✔️ Validado
-  CRUD de Sócios         ✔️ Validado
-  CRUD de Campos         ✔️ Validado
-  CRUD de Treinadores    ✔️ Validado
-  CRUD de Reservas       ✔️ Validado
-  Dashboard              ✔️ Validado
-  API REST               ✔️ Validada
-  Swagger                ✔️ Validado
+| Área validada | Resultado |
+|---|:---:|
+| Autenticação | ✔️ Validado |
+| Autorização | ✔️ Validado |
+| CRUD de Sócios | ✔️ Validado |
+| CRUD de Campos | ✔️ Validado |
+| CRUD de Treinadores | ✔️ Validado |
+| CRUD de Reservas | ✔️ Validado |
+| Dashboard | ✔️ Validado |
+| API REST | ✔️ Validada |
+| Swagger | ✔️ Validado |
 
 Os testes funcionais do MVP confirmaram os principais fluxos, a
 comunicação frontend/backend, a persistência de dados e os mecanismos de
@@ -298,10 +298,12 @@ Projeto desenvolvido para fins académicos.
 
 ------------------------------------------------------------------------
 
-::: {align="center"}
+<div align="center">
+
 ### 🎾 Atlantica Padel Club Manager
 
 **Simplifying Padel Club Management**
 
 Built with Next.js · NestJS · TypeScript · Prisma · PostgreSQL
-:::
+
+</div>
